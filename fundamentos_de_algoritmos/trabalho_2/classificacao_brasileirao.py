@@ -36,5 +36,28 @@ def le_arquivo(nome: str) -> list[str]:
         print(f'Erro na leitura do arquivo "{nome}": {e.errno} - {e.strerror}.')
         sys.exit(1)
 
+def separar_string(string: str) -> list[str]:
+    '''
+    Recebe uma *string* e retorna uma lista com todos as palavras separadas em elementos individuais, de acordo com os espaços.
+    Exemplos:
+    >>> separar_string("Sao-Paulo 1 Palmeiras 3")
+    ['Sao-Paulo', '1', 'Palmeiras', '3']
+    >>> separar_string("Atletico-MG 2 Flamengo 0")
+    ['Atletico-MG', '2', 'Flamengo', '0']
+    '''
+    lista: list[str] = []
+    
+    temp: str = ""
+    for i in range(len(string)):
+        if string[i] == " ":
+            lista.append(temp)
+            temp = ""
+        else:
+            temp = temp + string[i]
+            if string[i] == string[-1]:
+                lista.append(temp)
+        
+    return lista
+
 if __name__ == '__main__':
     main()
