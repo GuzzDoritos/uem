@@ -1,4 +1,5 @@
 import sys
+from dataclasses import dataclass
 
 def main():
     if len(sys.argv) < 2:
@@ -36,6 +37,19 @@ def le_arquivo(nome: str) -> list[str]:
         print(f'Erro na leitura do arquivo "{nome}": {e.errno} - {e.strerror}.')
         sys.exit(1)
 
+
+@dataclass
+class Time:
+    '''Representa a instância de um time.
+    nome (string): nome do time
+    pontos (int): quantidade de pontos de um time
+    gols_feitos (int): quantidade de gols feitos
+    gols_sofridos (int): quantidade de gols sofridos'''
+    nome: str
+    pontos: int
+    gols_feitos: int
+    gols_sofridos: int
+    
 def separar_string(string: str) -> list[str]:
     '''
     Recebe uma *string* e retorna uma lista com todos as palavras separadas em elementos individuais, de acordo com os espaços.
