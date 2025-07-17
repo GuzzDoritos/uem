@@ -1,5 +1,6 @@
 import sys
 from dataclasses import dataclass
+from enum import Enum
 
 def main():
     if len(sys.argv) < 2:
@@ -37,6 +38,12 @@ def le_arquivo(nome: str) -> list[str]:
         print(f'Erro na leitura do arquivo "{nome}": {e.errno} - {e.strerror}.')
         sys.exit(1)
 
+class ColunasJogos(Enum):
+    '''Representa o significado de cada posição na lista da string de um jogo separado.'''
+    ANFITRIAO = 0
+    GOLS_ANFITRIAO = 1
+    VISITANTE = 2
+    GOLS_VISITANTE = 3
 
 @dataclass
 class Time:
@@ -49,7 +56,7 @@ class Time:
     pontos: int
     gols_feitos: int
     gols_sofridos: int
-    
+
 def separar_string(string: str) -> list[str]:
     '''
     Recebe uma *string* e retorna uma lista com todos as palavras separadas em elementos individuais, de acordo com os espaços.
