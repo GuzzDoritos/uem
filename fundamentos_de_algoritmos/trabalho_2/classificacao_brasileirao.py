@@ -58,7 +58,7 @@ class Time:
     gols_sofridos: int
 
 
-def verificar_time(nome_time: str, times: Time) -> bool:
+def verificar_time(times: list[Time], nome_time: str) -> bool:
     '''
     Verifica se um time com nome *nome_time* se encontra
     em uma lista *times*.
@@ -67,10 +67,26 @@ def verificar_time(nome_time: str, times: Time) -> bool:
     >>> time_ag = Time('Atletico-MG', 2, 1, 12)
     >>> time_fl = Time('Flamengo', 5, 5, 0)
     >>> times1 = [time_sp, time_pl, time_fl]
-    >>> times2 = [time_ag, time_p]
+    >>> times2 = [time_ag, time_fl, time_ag]
+    >>> times3 = [time_fl]
+    >>> times4 = []
+    >>> verificar_time(times1, 'Sao-Paulo')
+    True
+    >>> verificar_time(times2, 'Flamengo')
+    True
+    >>> verificar_time(times3, 'Atletico_MG')
+    False
+    >>> verificar_time(times4, 'Santos')
+    False
     '''
 
-    return True
+    existe: bool = False
+
+    for i in range(len(times)):
+        if times[i].nome == nome_time:
+            existe = True
+
+    return existe
 
 def separar_string(string: str) -> list[str]:
     '''
