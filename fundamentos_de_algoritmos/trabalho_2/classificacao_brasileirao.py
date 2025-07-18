@@ -57,6 +57,21 @@ class Time:
     gols_feitos: int
     gols_sofridos: int
 
+
+def verificar_time(nome_time: str, times: Time) -> bool:
+    '''
+    Verifica se um time com nome *nome_time* se encontra
+    em uma lista *times*.
+    >>> time_sp = Time('Sao-Paulo', 3, 2, 1)
+    >>> time_pl = Time('Palmeiras', 1, 5, 4)
+    >>> time_ag = Time('Atletico-MG', 2, 1, 12)
+    >>> time_fl = Time('Flamengo', 5, 5, 0)
+    >>> times1 = [time_sp, time_pl, time_fl]
+    >>> times2 = [time_ag, time_p]
+    '''
+
+    return True
+
 def separar_string(string: str) -> list[str]:
     '''
     Recebe uma *string* e retorna uma lista com todos as palavras separadas em elementos individuais, de acordo com os espaços.
