@@ -69,6 +69,24 @@ class Partida:
     visitante: Time
     gols_visitante: int
 
+def classificacao_campeonato(jogos_f: list[str]) -> str:
+    '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
+     em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
+     saldo de gols e ordem alfabética.
+     TODO: Exemplos'''
+
+    jogos: list[list[str]] = []
+
+    for i in range(len(jogos_f)):
+        partida: list[str] = separar_string(jogos_f[i])
+        jogos.append(partida)
+        
+
+    return ""
+
+
+# def criar_partida()
+
 def verificar_time(times: list[Time], nome_time: str) -> bool:
     '''
     Verifica se um time com nome *nome_time* se encontra
