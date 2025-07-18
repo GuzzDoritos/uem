@@ -57,6 +57,17 @@ class Time:
     gols_feitos: int
     gols_sofridos: int
 
+@dataclass
+class Partida:
+    '''Representa a instância de uma partida.
+    anfitriao (Time): qual time foi anfitriao
+    gols_anfitriao (int): quantos gols o time anfitrião fez
+    visitante (Time): qual time foi visitante
+    gols_visitante (int): quantos gols fez o visitante'''
+    anfitriao: Time
+    gols_anfitriao: int
+    visitante: Time
+    gols_visitante: int
 
 def verificar_time(times: list[Time], nome_time: str) -> bool:
     '''
