@@ -54,8 +54,8 @@ class Produto:
     valor: float
     categoria: Categoria
 
-def arrendondar_decimais(numero, decimais):
-    fator = 10 ** decimais
+def arrendondar_decimais(numero: float, decimais: int) -> float:
+    fator: float = 10 ** decimais
     return math.ceil(numero * fator) / fator
 
 def calcular_frete(produto: Produto, regiao: Regiao) -> float:
