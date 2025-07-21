@@ -98,6 +98,28 @@ class Jogo:
 #                 times[pos_anfitriao].gols_feitos = 
 
 #     return ""
+
+def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
+    '''Recebe uma *lista* de jogos em formato string,
+    criando uma nova lista com cada jogo representado por
+    tipo composto.
+    Exemplos:
+    >>> lista_jogos_fonte = [['Sao-Paulo', '1', 'Palmeiras', '3'], ['Atletico-MG', '2', 'Flamengo', '0']]
+    >>> lista_jogos = criar_jogos(lista_jogos_fonte)
+    >>> lista_jogos[0].anfitriao
+    'Sao-Paulo'
+    '''
+    lista_jogos: list[Jogo] = []
+
+    for i in range(len(lista)):
+        anfitriao: str = lista[i][ColunasJogos.ANFITRIAO.value]
+        gols_anfitriao: int = int(lista[i][ColunasJogos.GOLS_ANFITRIAO.value])
+        visitante: str = lista[i][ColunasJogos.VISITANTE.value]
+        gols_visitante: int = int(lista[i][ColunasJogos.GOLS_VISITANTE.value])
+        
+        lista_jogos.append(Jogo(anfitriao, gols_anfitriao, visitante, gols_visitante))
+    
+    return lista_jogos
     '''
     Verifica se um time com nome *nome_time* se encontra
     em uma lista *times*.
