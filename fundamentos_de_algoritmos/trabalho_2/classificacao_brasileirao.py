@@ -120,6 +120,67 @@ def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
         lista_jogos.append(Jogo(anfitriao, gols_anfitriao, visitante, gols_visitante))
     
     return lista_jogos
+
+def criar_times(lista_jogos: list[list[str]]) -> list[Time]:
+    '''
+    Recebe uma *lista_jogos* e a partir desta, cria todos os times,
+    definindo seus valores conforme tipo composto *Time*, adicionando-os
+    a uma *lista_times* e retornando-a.
+    Exemplos:
+    >>> lista_jogos1 = [['Sao-Paulo', '1', 'Palmeiras', '3'], ['Atletico-MG', '2', 'Flamengo', '0']]
+    >>> lista_times1 = criar_times(lista_jogos1)
+    >>> lista_times1[0].nome
+    'Sao-Paulo'
+    >>> lista_times1[0].gols_feitos
+    1
+    >>> lista_times1[2].vitorias
+    1
+    >>> lista_times1[1].pontos
+    3
+    '''
+
+    lista_times: list[Time] = []
+
+    for i in range(len(lista_jogos)):
+        gols_anfitriao: int = 0
+        gols_visitante: int = 0
+        pos_anfitriao: int = 0
+        pos_visitante: int = 0
+
+        for j in range(len(lista_jogos[i])):
+            if j == ColunasJogos.ANFITRIAO:
+                pos_anfitriao = encontrar_pos_time(lista_times, lista_jogos[i][j])
+                print(pos_anfitriao)
+            elif j == ColunasJogos.GOLS_ANFITRIAO:
+                gols_anfitriao = int(lista_jogos[i][j])
+            elif j == ColunasJogos.VISITANTE:
+                pos_visitante = encontrar_pos_time(lista_times, lista_jogos[i][j])
+            elif j == ColunasJogos.GOLS_VISITANTE:
+                gols_visitante = int(lista_jogos[i][j])
+        
+        anfitriao: Time = lista_times[pos_anfitriao]
+        visitante: Time = lista_times[pos_visitante]
+
+        anfitriao.gols_feitos += gols_anfitriao
+        anfitriao.gols_sofridos += gols_visitante
+        anfitriao.saldo_gols = anfitriao.gols_feitos - anfitriao.gols_sofridos
+
+        visitante.gols_feitos += gols_visitante
+        visitante.gols_sofridos += gols_anfitriao
+        visitante.saldo_gols = visitante.gols_feitos - visitante.gols_sofridos
+
+        if anfitriao.gols_feitos == visitante.gols_feitos:
+            anfitriao.pontos += 1
+            visitante.pontos += 1
+        elif anfitriao.gols_feitos > visitante.gols_feitos:
+            anfitriao.vitorias += 1
+            anfitriao.pontos += 3
+        else:
+            visitante.vitorias += 1
+            visitante.pontos += 3
+
+    return lista_times
+
 def encontrar_pos_time(times: list[Time], nome_time: str) -> int:
     '''
     Verifica se um time com nome *nome_time* se encontra
