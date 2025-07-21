@@ -51,11 +51,15 @@ class Time:
     nome (string): nome do time
     pontos (int): quantidade de pontos de um time
     gols_feitos (int): quantidade de gols feitos
-    gols_sofridos (int): quantidade de gols sofridos'''
+    gols_sofridos (int): quantidade de gols sofridos
+    saldo_gols (int): gols feitos - gols sofridos
+    vitorias (int): número de vitórias'''
     nome: str
     pontos: int
     gols_feitos: int
     gols_sofridos: int
+    saldo_gols: int
+    vitorias: int
 
 @dataclass
 class Partida:
