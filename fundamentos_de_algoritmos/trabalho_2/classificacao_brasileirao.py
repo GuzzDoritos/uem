@@ -75,25 +75,29 @@ class Jogo:
     visitante: str
     gols_visitante: int
 
-def classificacao_campeonato(jogos_f: list[str]) -> str:
-    '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
-     em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
-     saldo de gols e ordem alfabética.
-     TODO: Exemplos'''
+# def classificacao_campeonato(jogos_fonte: list[str]) -> str:
+#     '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
+#      em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
+#      saldo de gols e ordem alfabética.
+#      TODO: Exemplos'''
 
-    jogos: list[list[str]] = []
+#     jogos: list[list[str]] = []
+#     times: list[Time] = []
 
-    for i in range(len(jogos_f)):
-        partida: list[str] = separar_string(jogos_f[i])
-        jogos.append(partida)
+#     for i in range(len(jogos_fonte)):
+#         jogo: list[str] = separar_string(jogos_fonte[i])
+#         jogos.append(jogo)
         
+#     for i in range(len(jogos)):
+#         for j in range(len(jogos[i])):
+#             pos_anfitriao: int = 0
+#             pos_visitante: int = 0
+#             if j == ColunasJogos.ANFITRIAO:
+#                 pos_anfitriao = encontrar_pos_time(times, jogos[i][j])
+#             elif j == ColunasJogos.GOLS_ANFITRIAO:
+#                 times[pos_anfitriao].gols_feitos = 
 
-    return ""
-
-
-# def criar_partida()
-
-def verificar_time(times: list[Time], nome_time: str) -> bool:
+#     return ""
     '''
     Verifica se um time com nome *nome_time* se encontra
     em uma lista *times*.
