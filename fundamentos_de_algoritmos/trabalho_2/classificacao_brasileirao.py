@@ -120,34 +120,45 @@ def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
         lista_jogos.append(Jogo(anfitriao, gols_anfitriao, visitante, gols_visitante))
     
     return lista_jogos
+def encontrar_pos_time(times: list[Time], nome_time: str) -> int:
     '''
     Verifica se um time com nome *nome_time* se encontra
-    em uma lista *times*.
-    >>> time_sp = Time('Sao-Paulo', 3, 2, 1)
-    >>> time_pl = Time('Palmeiras', 1, 5, 4)
-    >>> time_ag = Time('Atletico-MG', 2, 1, 12)
-    >>> time_fl = Time('Flamengo', 5, 5, 0)
-    >>> times1 = [time_sp, time_pl, time_fl]
-    >>> times2 = [time_ag, time_fl, time_ag]
-    >>> times3 = [time_fl]
-    >>> times4 = []
-    >>> verificar_time(times1, 'Sao-Paulo')
-    True
-    >>> verificar_time(times2, 'Flamengo')
-    True
-    >>> verificar_time(times3, 'Atletico_MG')
-    False
-    >>> verificar_time(times4, 'Santos')
-    False
+    em uma lista *times*, e retorna sua posição. Se não tiver esse time,
+    cria o mesmo, adiciona à lista e retorna o novo index.
+    >>> time_sp = Time('Sao-Paulo', 3, 2, 1, 1, 2)
+    >>> time_pl = Time('Palmeiras', 1, 5, 4, 4, 1)
+    >>> time_ag = Time('Atletico-MG', 2, 1, 12, 19, 1)
+    >>> time_fl = Time('Flamengo', 5, 5, 0, 3, 4)
+    >>> times1: list[Time] = [time_sp, time_pl, time_fl]
+    >>> times2: list[Time] = [time_ag, time_fl, time_sp]
+    >>> times3: list[Time] = [time_fl]
+    >>> times4: list[Time] = []
+    >>> encontrar_pos_time(times1, 'Sao-Paulo')
+    0
+    >>> encontrar_pos_time(times2, 'Flamengo')
+    1
+    >>> encontrar_pos_time(times3, 'Atletico-MG')
+    1
+    >>> encontrar_pos_time(times4, 'Santos')
+    0
+    >>> encontrar_pos_time(times2, 'Palmeiras')
+    3
     '''
 
     existe: bool = False
+    index: int = 0
 
     for i in range(len(times)):
         if times[i].nome == nome_time:
             existe = True
+            index = i
 
-    return existe
+    if not existe:
+        novo_time: Time = Time(nome_time, 0, 0, 0, 0, 0)
+        times.append(novo_time)
+        index = len(times) - 1
+
+    return index
 
 def separar_string(string: str) -> list[str]:
     '''
