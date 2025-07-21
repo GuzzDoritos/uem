@@ -121,13 +121,13 @@ def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
     
     return lista_jogos
 
-def criar_times(lista_jogos: list[list[str]]) -> list[Time]:
+def criar_times(lista_jogos: list[Jogo]) -> list[Time]:
     '''
     Recebe uma *lista_jogos* e a partir desta, cria todos os times,
     definindo seus valores conforme tipo composto *Time*, adicionando-os
     a uma *lista_times* e retornando-a.
     Exemplos:
-    >>> lista_jogos1 = [['Sao-Paulo', '1', 'Palmeiras', '3'], ['Atletico-MG', '2', 'Flamengo', '0']]
+    >>> lista_jogos1 = [Jogo('Sao-Paulo', 1, 'Palmeiras', 3), Jogo('Atletico-MG', 2, 'Flamengo', 0)]
     >>> lista_times1 = criar_times(lista_jogos1)
     >>> lista_times1[0].nome
     'Sao-Paulo'
@@ -142,31 +142,18 @@ def criar_times(lista_jogos: list[list[str]]) -> list[Time]:
     lista_times: list[Time] = []
 
     for i in range(len(lista_jogos)):
-        gols_anfitriao: int = 0
-        gols_visitante: int = 0
-        pos_anfitriao: int = 0
-        pos_visitante: int = 0
-
-        for j in range(len(lista_jogos[i])):
-            if j == ColunasJogos.ANFITRIAO:
-                pos_anfitriao = encontrar_pos_time(lista_times, lista_jogos[i][j])
-                print(pos_anfitriao)
-            elif j == ColunasJogos.GOLS_ANFITRIAO:
-                gols_anfitriao = int(lista_jogos[i][j])
-            elif j == ColunasJogos.VISITANTE:
-                pos_visitante = encontrar_pos_time(lista_times, lista_jogos[i][j])
-            elif j == ColunasJogos.GOLS_VISITANTE:
-                gols_visitante = int(lista_jogos[i][j])
+        pos_anfitriao: int = encontrar_pos_time(lista_times, lista_jogos[i].anfitriao)
+        pos_visitante: int = encontrar_pos_time(lista_times, lista_jogos[i].visitante)
         
         anfitriao: Time = lista_times[pos_anfitriao]
         visitante: Time = lista_times[pos_visitante]
 
-        anfitriao.gols_feitos += gols_anfitriao
-        anfitriao.gols_sofridos += gols_visitante
+        anfitriao.gols_feitos += lista_jogos[i].gols_anfitriao
+        anfitriao.gols_sofridos += lista_jogos[i].gols_visitante
         anfitriao.saldo_gols = anfitriao.gols_feitos - anfitriao.gols_sofridos
 
-        visitante.gols_feitos += gols_visitante
-        visitante.gols_sofridos += gols_anfitriao
+        visitante.gols_feitos += lista_jogos[i].gols_visitante
+        visitante.gols_sofridos += lista_jogos[i].gols_anfitriao
         visitante.saldo_gols = visitante.gols_feitos - visitante.gols_sofridos
 
         if anfitriao.gols_feitos == visitante.gols_feitos:
