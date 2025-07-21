@@ -62,15 +62,17 @@ class Time:
     vitorias: int
 
 @dataclass
-class Partida:
-    '''Representa a instância de uma partida.
-    anfitriao (Time): qual time foi anfitriao
-    gols_anfitriao (int): quantos gols o time anfitrião fez
-    visitante (Time): qual time foi visitante
-    gols_visitante (int): quantos gols fez o visitante'''
-    anfitriao: Time
+class Jogo:
+    '''Representa a instância de um jogo.
+    anfitriao (string): nome do time anfitrião
+    gols_anfitriao (int): qtd. de gols do time anfitrião
+    visitante (string): nome do time visitante
+    gols_visitante (int): qtd. de gols do time visitante
+    '''
+
+    anfitriao: str
     gols_anfitriao: int
-    visitante: Time
+    visitante: str
     gols_visitante: int
 
 def classificacao_campeonato(jogos_f: list[str]) -> str:
