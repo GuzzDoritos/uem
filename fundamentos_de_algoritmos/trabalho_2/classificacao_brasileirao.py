@@ -12,10 +12,12 @@ def main():
         sys.exit(1)
     
     jogos = le_arquivo(sys.argv[1]) # type: ignore
-    
-    # TODO: solução da pergunta 1
 
     
+
+    # TODO: solução da pergunta 1
+
+    classificacao_campeonato(jogos)
 
     # TODO: solução da pergunta 2
     # TODO: solução da pergunta 3
@@ -75,29 +77,29 @@ class Jogo:
     visitante: str
     gols_visitante: int
 
-# def classificacao_campeonato(jogos_fonte: list[str]) -> str:
-#     '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
-#      em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
-#      saldo de gols e ordem alfabética.
-#      TODO: Exemplos'''
+def classificacao_campeonato(jogos_fonte: list[str]):
+    '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
+     em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
+     saldo de gols e ordem alfabética.
+     TODO: Exemplos'''
 
-#     jogos: list[list[str]] = []
-#     times: list[Time] = []
+    jogos_temp: list[list[str]] = []
+    
+    for i in range(len(jogos_fonte)):
+        jogos_temp.append(separar_string(jogos_fonte[i]))
 
-#     for i in range(len(jogos_fonte)):
-#         jogo: list[str] = separar_string(jogos_fonte[i])
-#         jogos.append(jogo)
-        
-#     for i in range(len(jogos)):
-#         for j in range(len(jogos[i])):
-#             pos_anfitriao: int = 0
-#             pos_visitante: int = 0
-#             if j == ColunasJogos.ANFITRIAO:
-#                 pos_anfitriao = encontrar_pos_time(times, jogos[i][j])
-#             elif j == ColunasJogos.GOLS_ANFITRIAO:
-#                 times[pos_anfitriao].gols_feitos = 
+    jogos: list[Jogo] = criar_jogos(jogos_temp)
+    times: list[Time] = criar_times(jogos)
 
-#     return ""
+    imprimir_tabela(times)
+
+def imprimir_tabela(lista_times: list[Time]):
+    print("yo")
+
+def ordenar_times(lista_times: list[Time]):
+    '''Recebe uma *lista_times*, e então os ordena pelos seguintes critérios, em ordem:
+    1. Pontos
+    2.'''
 
 def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
     '''Recebe uma *lista* de jogos em formato string,
