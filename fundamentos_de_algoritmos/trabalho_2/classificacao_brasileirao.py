@@ -99,6 +99,7 @@ def classificacao_campeonato(jogos_fonte: list[str]):
     jogos: list[Jogo] = criar_jogos(jogos_temp)
     times: list[Time] = criar_times(jogos)
 
+    ordenar_times(times)
     imprimir_tabela(times)
 
 def imprimir_tabela(lista_times: list[Time]):
