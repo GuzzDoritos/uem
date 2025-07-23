@@ -97,9 +97,14 @@ def imprimir_tabela(lista_times: list[Time]):
     print("yo")
 
 def ordenar_times(lista_times: list[Time]):
-    '''Recebe uma *lista_times*, e então os ordena pelos seguintes critérios, em ordem:
-    1. Pontos
-    2.'''
+    '''Recebe uma *lista_times*, e então os ordena por seus pontos totais.
+    Caso haja empate, o desempate será realizado na seguinte ordem:
+    1. Vitórias
+    2. Saldo de gols
+    3. Ordem alfabética
+    TODO: Exemplos'''
+
+    
 
 def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
     '''Recebe uma *lista* de jogos em formato string,
