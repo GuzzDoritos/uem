@@ -147,7 +147,15 @@ def ordenar_times(lista_times: list[Time]):
     3. Ordem alfabética
     TODO: Exemplos'''
 
-    
+    n = len(lista_times)
+    for i in range(n):
+        maximo = i
+        for j in range(i + 1, n):
+            if lista_times[maximo].pontos < lista_times[j].pontos:
+                maximo = j
+        aux = lista_times[i]
+        lista_times[i] = lista_times[maximo]
+        lista_times[maximo] = aux
 
 def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
     '''Recebe uma *lista* de jogos em formato string,
