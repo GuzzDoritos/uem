@@ -103,7 +103,41 @@ def classificacao_campeonato(jogos_fonte: list[str]):
     imprimir_tabela(times)
 
 def imprimir_tabela(lista_times: list[Time]):
-    print("yo")
+    '''Realiza a impressão da tabela. Depois eu termino essa doc'''
+
+    tam: int = len(lista_times)
+    tam_coluna_time: int = len(time_maior_nome(lista_times))
+    coluna_time_modelo: str = " " * tam_coluna_time
+
+    primeira_linha_titulo: str = Tabela.PRIMEIRA_LINHA_TITULO.value
+    primeira_linha_pontos: str = Tabela.PRIMEIRA_LINHA_PONTOS.value
+    primeira_linha_vitorias: str = Tabela.PRIMEIRA_LINHA_VITORIAS.value
+    primeira_linha_saldos: str = Tabela.PRIMEIRA_LINHA_SALDOS.value
+
+    primeira_linha_titulo = primeira_linha_titulo + ( " " * (len(coluna_time_modelo) - len(primeira_linha_titulo))) + "|"
+
+    primeira_linha = primeira_linha_titulo + primeira_linha_pontos + primeira_linha_vitorias + primeira_linha_saldos
+
+    print(primeira_linha)
+
+    modelo_nome_time: str = " " * tam_coluna_time
+    modelo_numeros: str = " " * Tabela.ESPACOS_COLUNA.value
+
+    for i in range(tam):
+        nome_linha: str = lista_times[i].nome
+        nome_linha = nome_linha + ( " " * (len(coluna_time_modelo) - len(nome_linha))) + "|"
+
+        print(nome_linha)
+
+def time_maior_nome(lista_times: list[Time]) -> str:
+    '''TODO: doc'''
+    maior_nome: str = lista_times[0].nome
+    for i in range(len(lista_times)):
+        if len(lista_times[i].nome) > len(maior_nome):
+            maior_nome = lista_times[i].nome
+    return maior_nome
+        
+
 
 def ordenar_times(lista_times: list[Time]):
     '''Recebe uma *lista_times*, e então os ordena por seus pontos totais.
