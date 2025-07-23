@@ -47,6 +47,14 @@ class ColunasJogos(Enum):
     VISITANTE = 2
     GOLS_VISITANTE = 3
 
+class Tabela(Enum):
+    '''Representa os valores de estruturação da tabela de classificação.'''
+    ESPACOS_COLUNA = 3
+    PRIMEIRA_LINHA_TITULO = "TIMES"
+    PRIMEIRA_LINHA_PONTOS = " P "
+    PRIMEIRA_LINHA_VITORIAS = " V "
+    PRIMEIRA_LINHA_SALDOS = " S "
+
 @dataclass
 class Time:
     '''Representa a instância de um time.
