@@ -49,11 +49,11 @@ class ColunasJogos(Enum):
 
 class Tabela(Enum):
     '''Representa os valores de estruturação da tabela de classificação.'''
-    ESPACOS_COLUNA = 3
+    ESPACOS_COLUNA = 4
     PRIMEIRA_LINHA_TITULO = "TIMES"
-    PRIMEIRA_LINHA_PONTOS = " P "
-    PRIMEIRA_LINHA_VITORIAS = " V "
-    PRIMEIRA_LINHA_SALDOS = " S "
+    PRIMEIRA_LINHA_PONTOS = "P   "
+    PRIMEIRA_LINHA_VITORIAS = "V   "
+    PRIMEIRA_LINHA_SALDOS = "S"
 
 @dataclass
 class Time:
@@ -114,20 +114,30 @@ def imprimir_tabela(lista_times: list[Time]):
     primeira_linha_vitorias: str = Tabela.PRIMEIRA_LINHA_VITORIAS.value
     primeira_linha_saldos: str = Tabela.PRIMEIRA_LINHA_SALDOS.value
 
-    primeira_linha_titulo = primeira_linha_titulo + ( " " * (len(coluna_time_modelo) - len(primeira_linha_titulo))) + "|"
+    primeira_linha_titulo = primeira_linha_titulo + ( " " * (len(coluna_time_modelo) - len(primeira_linha_titulo))) + " | "
 
     primeira_linha = primeira_linha_titulo + primeira_linha_pontos + primeira_linha_vitorias + primeira_linha_saldos
 
     print(primeira_linha)
 
-    modelo_nome_time: str = " " * tam_coluna_time
-    modelo_numeros: str = " " * Tabela.ESPACOS_COLUNA.value
-
     for i in range(tam):
         nome_linha: str = lista_times[i].nome
-        nome_linha = nome_linha + ( " " * (len(coluna_time_modelo) - len(nome_linha))) + "|"
+        nome_linha = nome_linha + ( " " * (len(coluna_time_modelo) - len(nome_linha))) + " | "
 
-        print(nome_linha)
+        pontos: str = str(lista_times[i].pontos)
+        vitorias: str = str(lista_times[i].vitorias)
+        saldo_gols: str = str(lista_times[i].saldo_gols)
+
+        vitorias_recuo: int = 0
+        if lista_times[i].saldo_gols < 0:
+            vitorias_recuo = 1
+
+        pontos = pontos + ( " " * (Tabela.ESPACOS_COLUNA.value - len(pontos)))
+        vitorias = vitorias + ( " " * (Tabela.ESPACOS_COLUNA.value - len(vitorias) - vitorias_recuo))
+
+        linha: str = nome_linha + pontos + vitorias + saldo_gols
+
+        print(linha)
 
 def time_maior_nome(lista_times: list[Time]) -> str:
     '''TODO: doc'''
@@ -137,8 +147,6 @@ def time_maior_nome(lista_times: list[Time]) -> str:
             maior_nome = lista_times[i].nome
     return maior_nome
         
-
-
 def ordenar_times(lista_times: list[Time]):
     '''Recebe uma *lista_times*, e então os ordena por seus pontos totais.
     Caso haja empate, o desempate será realizado na seguinte ordem:
