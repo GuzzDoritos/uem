@@ -336,7 +336,7 @@ def main():
         print('Muitos parâmetros. Informe apenas um nome de arquivo.')
         sys.exit(1)
     
-    jogos = le_arquivo(sys.argv[1]) # type: ignore
+    jogos: list[str] = le_arquivo(sys.argv[1])
 
     
 
