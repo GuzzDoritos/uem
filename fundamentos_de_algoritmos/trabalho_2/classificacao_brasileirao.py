@@ -164,6 +164,47 @@ def ordenar_times(lista_times: list[Time]):
         aux = lista_times[i]
         lista_times[i] = lista_times[maximo]
         lista_times[maximo] = aux
+    
+    desempatar_pontos(lista_times)
+    desempatar_vitorias(lista_times)
+    desempatar_saldos(lista_times)
+
+def desempatar_pontos(lista_times: list[Time]):
+    n = len(lista_times)
+
+    for i in range(n):
+        max_idx: int = i
+        for j in range(i + 1, n):
+            pontos_iguais: bool = lista_times[j].pontos == lista_times[max_idx].pontos
+            if lista_times[j].vitorias > lista_times[max_idx].vitorias and pontos_iguais:
+                max_idx = j
+        lista_times[i], lista_times[max_idx] = lista_times[max_idx], lista_times[i]
+
+def desempatar_vitorias(lista_times: list[Time]):
+    n = len(lista_times)
+
+    for i in range(n):
+        max_idx: int = i
+        for j in range(i + 1, n):
+            pontos_iguais: bool = lista_times[j].pontos == lista_times[max_idx].pontos
+            vitorias_iguais: bool = lista_times[j].vitorias == lista_times[max_idx].vitorias
+            if lista_times[j].saldo_gols > lista_times[max_idx].saldo_gols and pontos_iguais and vitorias_iguais:
+                max_idx = j
+        lista_times[i], lista_times[max_idx] = lista_times[max_idx], lista_times[i]
+
+def desempatar_saldos(lista_times: list[Time]):
+    n = len(lista_times)
+
+    for i in range(n):
+        min_idx: int = i
+        for j in range(i + 1, n):
+            pontos_iguais: bool = lista_times[j].pontos == lista_times[min_idx].pontos
+            vitorias_iguais: bool = lista_times[j].vitorias == lista_times[min_idx].vitorias
+            saldos_iguais: bool = lista_times[j].saldo_gols == lista_times[min_idx].saldo_gols
+            if lista_times[j].nome < lista_times[min_idx].nome and saldos_iguais and pontos_iguais and vitorias_iguais:
+                min_idx = j
+        lista_times[i], lista_times[min_idx] = lista_times[min_idx], lista_times[i]
+
 
 def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
     '''Recebe uma *lista* de jogos em formato string,
