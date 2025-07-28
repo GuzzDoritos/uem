@@ -343,6 +343,18 @@ def maior_aproveitamento(times: list[Time]):
 
 # FINAL SOLUÇÃO PERGUNTA 2
 
+# COMEÇO SOLUÇÃO PERGUNTA 3
+
+def defesa_menos_vazada(times: list[Time]):
+    melhor_defesa: Time = times[0]
+    for i in range(len(times)):
+        if times[i].gols_sofridos < melhor_defesa.gols_sofridos:
+            melhor_defesa = times[i]
+
+    print("O time com a defesa menos vazada foi " + melhor_defesa.nome + ", com apenas " + str(melhor_defesa.gols_sofridos) + " gols sofridos.")
+
+# FINAL SOLUÇÃO PERGUNTA 3
+
 def le_arquivo(nome: str) -> list[str]:
     '''
     Lê o conteúdo do arquivo *nome* e devolve uma lista onde cada elemento
