@@ -26,7 +26,9 @@ class Time:
     gols_sofridos (int): quantidade de gols sofridos
     saldo_gols (int): gols feitos - gols sofridos
     vitorias (int): número de vitórias
-    jogos_anfitriao (int): quantidade de vezes que jogou como anfitrião'''
+    jogos_anfitriao (int): quantidade de vezes que jogou como anfitrião
+    pontos_anfitriao (int): quantidade de pontos que ganhou como anfitrião
+    aproveitamento_anfitriao (int): razão entre os pontos que ganhou e os pontos possíveis totais, como anfitrião'''
     nome: str
     pontos: int = 0
     gols_feitos: int = 0
@@ -35,6 +37,7 @@ class Time:
     vitorias: int = 0
     jogos_anfitriao: int = 0
     pontos_anfitriao: int = 0
+    aproveitamento_anfitriao: float = 0.0
 
 @dataclass
 class Jogo:
@@ -70,7 +73,7 @@ def separar_string(string: str) -> list[str]:
             temp = ""
         else:
             temp = temp + string[i]
-            if string[i] == string[-1]:
+            if i == len(string) - 1:
                 lista.append(temp)
         
     return lista
@@ -181,11 +184,11 @@ def criar_times(lista_jogos: list[Jogo]) -> list[Time]:
         visitante.gols_sofridos += lista_jogos[i].gols_anfitriao
         visitante.saldo_gols = visitante.gols_feitos - visitante.gols_sofridos
 
-        if anfitriao.gols_feitos == visitante.gols_feitos:
+        if lista_jogos[i].gols_anfitriao == lista_jogos[i].gols_visitante:
             anfitriao.pontos += 1
             anfitriao.pontos_anfitriao += 1
             visitante.pontos += 1
-        elif anfitriao.gols_feitos > visitante.gols_feitos:
+        elif lista_jogos[i].gols_anfitriao > lista_jogos[i].gols_visitante:
             anfitriao.vitorias += 1
             anfitriao.pontos += 3
             anfitriao.pontos_anfitriao += 3
@@ -290,24 +293,55 @@ def imprimir_tabela(lista_times: list[Time]):
 
         print(linha)
 
-def classificacao_campeonato(jogos_fonte: list[str]):
+def classificacao_campeonato(times: list[Time]):
     '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
      em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
      saldo de gols e ordem alfabética.
      TODO: Exemplos'''
-
-    jogos_temp: list[list[str]] = []
-    
-    for i in range(len(jogos_fonte)):
-        jogos_temp.append(separar_string(jogos_fonte[i]))
-
-    jogos: list[Jogo] = criar_jogos(jogos_temp)
-    times: list[Time] = criar_times(jogos)
-
     ordenar_times(times)
     imprimir_tabela(times)
 
 # FINAL SOLUÇÃO PERGUNTA 1
+
+# COMEÇO SOLUÇÃO PERGUNTA 2
+
+def maior_aproveitamento(times: list[Time]):
+    '''TODO: doc'''
+
+    lista: list[Time] = []
+    maior: Time = times[0]
+
+    for i in range(len(times)):
+        max_pontos: int = times[i].jogos_anfitriao * 3
+        times[i].aproveitamento_anfitriao = times[i].pontos_anfitriao / max_pontos
+
+        if times[i].aproveitamento_anfitriao > maior.aproveitamento_anfitriao:
+            maior = times[i]
+        
+    lista.append(maior)
+
+    for i in range(len(times)):
+        if times[i].aproveitamento_anfitriao == maior.aproveitamento_anfitriao and times[i] != maior:
+            lista.append(times[i])
+    
+    if len(lista) > 1: 
+        msg_times: str = "Os times com maior aproveitamento como anfitriões são: "
+    else:
+        msg_times: str = "O time com maior aproveitamento como anfitrião é: "
+
+    for i in range(len(lista)):
+        if i == len(lista) - 1:
+            msg_times = msg_times + lista[i].nome + "."
+        else:
+            msg_times = msg_times + lista[i].nome + ", "
+
+    taxa_aproveitamento: str = str(maior.aproveitamento_anfitriao * 100)[:4] + "%"
+
+    print(msg_times)
+    print("A maior taxa de aproveitamento é: " + taxa_aproveitamento)
+
+
+# FINAL SOLUÇÃO PERGUNTA 2
 
 def le_arquivo(nome: str) -> list[str]:
     '''
@@ -336,15 +370,24 @@ def main():
         print('Muitos parâmetros. Informe apenas um nome de arquivo.')
         sys.exit(1)
     
-    jogos: list[str] = le_arquivo(sys.argv[1])
+    jogos_fonte: list[str] = le_arquivo(sys.argv[1])
 
+    jogos_temp: list[list[str]] = []
     
+    for i in range(len(jogos_fonte)):
+        jogos_temp.append(separar_string(jogos_fonte[i]))
+
+    jogos: list[Jogo] = criar_jogos(jogos_temp)
+    times: list[Time] = criar_times(jogos)
 
     # TODO: solução da pergunta 1
 
-    classificacao_campeonato(jogos)
+    classificacao_campeonato(times)
 
     # TODO: solução da pergunta 2
+
+    maior_aproveitamento(times)
+
     # TODO: solução da pergunta 3
 
 if __name__ == '__main__':
