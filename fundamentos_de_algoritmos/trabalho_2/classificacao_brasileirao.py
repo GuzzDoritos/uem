@@ -119,7 +119,20 @@ def encontrar_pos_time(times: list[Time], nome_time: str) -> int:
     return index
 
 def time_maior_nome(lista_times: list[Time]) -> str:
-    '''TODO: doc'''
+    '''Encontra o time com o maior nome a partir de uma *lista_times*.
+    Exemplos:
+    >>> lista: list[Time] = [Time('Sao-Paulo'), Time('Flamengo'), Time('Red-Bull-Bragantino'), Time('Santos')]
+    >>> time_maior_nome(lista)
+    'Red-Bull-Bragantino'
+
+    >>> lista2: list[Time] = [Time('Gremio'), Time('Cruzeiro'), Time('Internacional')]
+    >>> time_maior_nome(lista2)
+    'Internacional'
+
+    >>> lista3: list[Time] = [Time('Palmeiras'), Time('Corinthians'), Time('Vasco')]
+    >>> time_maior_nome(lista3)
+    'Corinthians'
+    '''
     maior_nome: str = lista_times[0].nome
     for i in range(len(lista_times)):
         if len(lista_times[i].nome) > len(maior_nome):
@@ -150,9 +163,9 @@ def criar_jogos(lista: list[list[str]]) -> list[Jogo]:
 
 def criar_times(lista_jogos: list[Jogo]) -> list[Time]:
     '''
-    Recebe uma *lista_jogos* e a partir desta, cria todos os times,
-    definindo seus valores conforme tipo composto *Time*, adicionando-os
-    a uma *lista_times* e retornando-a.
+    Recebe uma *lista_jogos* e, a partir dela, cria todos os times envolvidos,
+    atualizando suas estatísticas (pontos, vitórias, gols, etc.) de acordo com os jogos disputados.
+    Retorna uma lista com objetos do tipo composto *Time*.
     Exemplos:
     >>> lista_jogos1 = [Jogo('Sao-Paulo', 1, 'Palmeiras', 3), Jogo('Atletico-MG', 2, 'Flamengo', 0)]
     >>> lista_times1 = criar_times(lista_jogos1)
@@ -200,11 +213,20 @@ def criar_times(lista_jogos: list[Jogo]) -> list[Time]:
 
 def ordenar_times(lista_times: list[Time]):
     '''Recebe uma *lista_times*, e então os ordena por seus pontos totais.
-    Caso haja empate, o desempate será realizado na seguinte ordem:
-    1. Vitórias
-    2. Saldo de gols
-    3. Ordem alfabética
-    TODO: Exemplos'''
+    Exemplos:
+    >>> lista1: list[Time] = [
+    ...     Time("A",pontos=6), 
+    ...     Time("B",pontos=3),
+    ...     Time("C",pontos=7)
+    ... ]
+    >>> ordenar_times(lista1)
+    >>> lista1[0].nome
+    'C'
+    >>> lista1[1].nome
+    'A'
+    >>> lista1[2].nome
+    'B'
+    '''
 
     n = len(lista_times)
     for i in range(n):
@@ -215,12 +237,23 @@ def ordenar_times(lista_times: list[Time]):
         aux = lista_times[i]
         lista_times[i] = lista_times[maximo]
         lista_times[maximo] = aux
-    
-    desempatar_pontos(lista_times)
-    desempatar_vitorias(lista_times)
-    desempatar_saldos(lista_times)
+
 
 def desempatar_pontos(lista_times: list[Time]):
+    '''
+    Recebe uma *lista_times* e então organiza por ordem
+    de vitórias os times que estiverem empatados por pontos
+    Exemplos:
+    >>> lista1: list[Time] = [
+    ...     Time("A",pontos=3,saldo_gols=3,vitorias=1), 
+    ...     Time("B",pontos=3,saldo_gols=3,vitorias=2)
+    ... ]
+    >>> desempatar_pontos(lista1)
+    >>> lista1[0].nome
+    'B'
+    >>> lista1[1].nome
+    'A'
+    '''
     n = len(lista_times)
 
     for i in range(n):
@@ -232,6 +265,20 @@ def desempatar_pontos(lista_times: list[Time]):
         lista_times[i], lista_times[max_idx] = lista_times[max_idx], lista_times[i]
 
 def desempatar_vitorias(lista_times: list[Time]):
+    '''
+    Recebe uma *lista_times* e então organiza por ordem
+    de *saldo_gols* os times que estiverem empatados por pontos E vitórias
+    Exemplos:
+    >>> lista1: list[Time] = [
+    ...     Time("A",pontos=6,saldo_gols=2,vitorias=2), 
+    ...     Time("B",pontos=6,saldo_gols=5,vitorias=2)
+    ... ]
+    >>> desempatar_vitorias(lista1)
+    >>> lista1[0].nome
+    'B'
+    >>> lista1[1].nome
+    'A'
+    '''
     n = len(lista_times)
 
     for i in range(n):
@@ -244,6 +291,23 @@ def desempatar_vitorias(lista_times: list[Time]):
         lista_times[i], lista_times[max_idx] = lista_times[max_idx], lista_times[i]
 
 def desempatar_saldos(lista_times: list[Time]):
+    '''
+    Recebe uma *lista_times* e então organiza por ordem
+    alfabética os times que estiverem empatados por pontos, vitórias E saldo de gols.
+    Exemplos:
+    >>> lista1: list[Time] = [
+    ...     Time("B",pontos=6,saldo_gols=3,vitorias=2), 
+    ...     Time("A",pontos=6,saldo_gols=3,vitorias=2),
+    ...     Time("C",pontos=6,saldo_gols=3,vitorias=2)
+    ... ]
+    >>> desempatar_saldos(lista1)
+    >>> lista1[0].nome
+    'A'
+    >>> lista1[1].nome
+    'B'
+    >>> lista1[2].nome
+    'C'
+    '''
     n = len(lista_times)
 
     for i in range(n):
@@ -257,7 +321,24 @@ def desempatar_saldos(lista_times: list[Time]):
         lista_times[i], lista_times[min_idx] = lista_times[min_idx], lista_times[i]
 
 def imprimir_tabela(lista_times: list[Time]):
-    '''Realiza a impressão da tabela. Depois eu termino essa doc'''
+    '''Realiza a impressão da tabela de classificação do Brasileirão, 
+    seguindo o modelo abaixo:
+    TIMES        | P   V   S
+    Nome-do-Time | 3   1  -1
+
+    Exemplo:
+    >>> lista: list[Time] = [
+    ...     Time('Santos',pontos=9,vitorias=3,saldo_gols=2),
+    ...     Time('Sao-Paulo',pontos=7,vitorias=2,saldo_gols=-1),
+    ...     Time('Flamengo',pontos=1,vitorias=0,saldo_gols=-3)
+    ... ]
+    >>> imprimir_tabela(lista)
+    TIMES     | P   V   S
+    Santos    | 9   3   2
+    Sao-Paulo | 7   2  -1
+    Flamengo  | 1   0  -3
+    >>>
+    '''
 
     tam: int = len(lista_times)
     tam_coluna_time: int = len(time_maior_nome(lista_times))
@@ -297,8 +378,13 @@ def classificacao_campeonato(times: list[Time]):
     '''Retorna a classificação do campeonato, a partir da análise do arquivo fonte de *jogos_f*,
      em uma tabela, organizado por critérios na seguinte prioridade: pontos, número de vitórias,
      saldo de gols e ordem alfabética.
-     TODO: Exemplos'''
+     Exemplo para a tabela presente na função *imprimir_tabela*'''
     ordenar_times(times)
+
+    desempatar_pontos(times)
+    desempatar_vitorias(times)
+    desempatar_saldos(times)
+
     imprimir_tabela(times)
 
 # FINAL SOLUÇÃO PERGUNTA 1
@@ -306,7 +392,31 @@ def classificacao_campeonato(times: list[Time]):
 # COMEÇO SOLUÇÃO PERGUNTA 2
 
 def maior_aproveitamento(times: list[Time]):
-    '''TODO: doc'''
+    '''
+    Verifica e informa qual(is) time(s) na lista *times* possui(em)
+    a maior taxa de aproveitamento jogando como anfitrião,
+    sendo representada pela razão entre os pontos ganhos como anfitrião, e os
+    pontos totais possíveis.
+    Exemplo:
+    >>> lista: list[Time] = [
+    ...     Time('A',jogos_anfitriao=2,pontos_anfitriao=1),
+    ...     Time('B',jogos_anfitriao=2,pontos_anfitriao=3),
+    ...     Time('C',jogos_anfitriao=1,pontos_anfitriao=1),
+    ... ]
+    >>> maior_aproveitamento(lista)
+    O time com maior aproveitamento como anfitrião é: B
+    A maior taxa de aproveitamento é: 50.0%
+    
+    >>> lista2: list[Time] = [
+    ...     Time('A',jogos_anfitriao=2,pontos_anfitriao=3),
+    ...     Time('B',jogos_anfitriao=2,pontos_anfitriao=3),
+    ...     Time('C',jogos_anfitriao=1,pontos_anfitriao=1),
+    ... ]
+    >>> maior_aproveitamento(lista2)
+    Os times com maior aproveitamento como anfitriões são: A, B
+    A maior taxa de aproveitamento é: 50.0%
+
+    '''
 
     lista: list[Time] = []
     maior: Time = times[0]
@@ -331,7 +441,7 @@ def maior_aproveitamento(times: list[Time]):
 
     for i in range(len(lista)):
         if i == len(lista) - 1:
-            msg_times = msg_times + lista[i].nome + "."
+            msg_times = msg_times + lista[i].nome
         else:
             msg_times = msg_times + lista[i].nome + ", "
 
@@ -340,12 +450,22 @@ def maior_aproveitamento(times: list[Time]):
     print(msg_times)
     print("A maior taxa de aproveitamento é: " + taxa_aproveitamento)
 
-
 # FINAL SOLUÇÃO PERGUNTA 2
 
 # COMEÇO SOLUÇÃO PERGUNTA 3
 
 def defesa_menos_vazada(times: list[Time]):
+    '''
+    Verifica qual time teve a menor quantidade de gols sofridos
+    da lista *times*.
+    Exemplos:
+    >>> lista1: list[Time] = [
+    ...     Time('A',gols_sofridos=7),
+    ...     Time('B',gols_sofridos=2),
+    ...     Time('C',gols_sofridos=5)
+    ... ]
+    >>> defesa_menos_vazada(lista1)
+    O time com a defesa menos vazada foi B, com apenas 2 gols sofridos.'''
     melhor_defesa: Time = times[0]
     for i in range(len(times)):
         if times[i].gols_sofridos < melhor_defesa.gols_sofridos:
@@ -392,15 +512,13 @@ def main():
     jogos: list[Jogo] = criar_jogos(jogos_temp)
     times: list[Time] = criar_times(jogos)
 
-    # TODO: solução da pergunta 1
-
     classificacao_campeonato(times)
-
-    # TODO: solução da pergunta 2
+    print()
 
     maior_aproveitamento(times)
+    print()
 
-    # TODO: solução da pergunta 3
+    defesa_menos_vazada(times)
 
 if __name__ == '__main__':
     main()
