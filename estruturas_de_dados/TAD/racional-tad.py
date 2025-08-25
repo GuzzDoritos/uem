@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 class Racional:
     def __init__(self, numerador: int, denominador: int) -> None:
         """Inicializa um número racional com o *numerador* e *denominador*
@@ -28,7 +27,6 @@ class Racional:
         self.denominador = denominador
         self.simplificar()
         
-    
     @staticmethod
     def mdc(a: int, b: int) -> int:
         """Calcula o máximo divisor comum (MDC) entre os inteiros *a* e *b*.
@@ -60,7 +58,6 @@ class Racional:
             return 0
         return abs(a * b) // Racional.mdc(a, b)
    
-
     def simplificar(self) -> None:
         """Simplifica a fração dividindo o numerador e o denominador pelo seu 
         máximo divisor comum (MDC).
@@ -145,7 +142,6 @@ class Racional:
         res.simplificar()
         return res
 
-
     def __mul__(self, outro: Racional) -> Racional:
         """Multiplica dois números racionais.
         Exemplo:
@@ -161,7 +157,6 @@ class Racional:
         
         res.simplificar()
         return res
-
 
     def __truediv__(self, outro: Racional) -> Racional:
         """Divide dois números racionais.
@@ -196,7 +191,6 @@ class Racional:
         """
         return self.numerador == outro.numerador and self.denominador == outro.denominador
 
-
     def __lt__(self, outro: Racional) -> bool:
         """Devolve True se self for menor que other; caso contrário, devolve False.
         >>> Racional(1, 3) < Racional(1, 2)
@@ -217,7 +211,6 @@ class Racional:
         """
         return f"{self.numerador}/{self.denominador}"
 
-
     def to_decimal(self):
         """Devolve o valor decimal (ponto flutuante) da fração.
         Exemplos
@@ -232,7 +225,6 @@ class Racional:
         """
         return self.numerador / self.denominador
         
-
 # OBSERVAÇÕES:
 # Os métodos mdc e mmc usam o decorator @staticmethod indicando que:
 # Não depende de nenhuma instância de Racional.
