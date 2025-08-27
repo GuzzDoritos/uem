@@ -224,7 +224,9 @@ class Racional:
         0.0
         """
         return self.numerador / self.denominador
-        
+
+if __name__ == "__main__":
+    print("oi")
 # OBSERVAÇÕES:
 # Os métodos mdc e mmc usam o decorator @staticmethod indicando que:
 # Não depende de nenhuma instância de Racional.
