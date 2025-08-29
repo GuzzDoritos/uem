@@ -41,13 +41,13 @@ def experimento_buscas(arranjo: Array, tentativas=100):
 
         # Tempo da busca sequencial
         inicio_seq = time.perf_counter()
-        #invocar função busca_sequencial
+        bs(arranjo, alvo)
         fim_seq = time.perf_counter()
         tempos_seq.append(fim_seq - inicio_seq)
 
         # Tempo da busca binária
         inicio_bin = time.perf_counter()
-        #invocar função busca_binaria
+        bb(arranjo, alvo, 0, len(arranjo) - 1)
         fim_bin = time.perf_counter()
         tempos_bin.append(fim_bin - inicio_bin)
 
@@ -57,14 +57,42 @@ def experimento_buscas(arranjo: Array, tentativas=100):
     print(f"Média busca binária:    {sum(tempos_bin)/tentativas:.8f} segundos")
 
 
+def bb(arranjo: Array, chave: int, esq: int, dir: int) -> int:
+    if esq > dir:
+        return esq
+    meio: int = (esq + dir) // 2
+    if arranjo[meio] == chave:
+        return meio
+    elif arranjo[meio] < chave:
+        return bb(arranjo, chave, meio + 1, dir)
+    elif arranjo[meio] > chave:
+        return bb(arranjo, chave, esq, meio - 1)
 
+
+def bs(arranjo: Array, alvo: int):
+    for i in range(len(arranjo)):
+        if arranjo[i] == alvo:
+            return arranjo[i]
+    return -1
 
 if __name__ == '__main__':
-    lista = gerar_numeros(1000000, 0, 10000000)
+    lista = gerar_numeros(1000000, 1, 1000000)
     # 1) Crie um arranjo estático com os elementos em lista
     # (use a estrutura de dados vista na aula anterior).
+
+    arranjo = Array(len(lista))
+    for i in range(len(lista)):
+        arranjo[i] = lista[i]
+
     # 2) Implemente funções de busca sequencial e busca binária.
+
+    foo = bb(arranjo, 23, 0, len(arranjo) - 1)
+    print(foo)
+
     # 3) Altere a função experimento_buscas e invoque-a.
+
+    experimento_buscas(arranjo)
+
     # 4) Em todos os casos busca sequencial é menos eficiente que 
     # busca binária? Busca sequencial ainda serve para alguma coisa?
     # Não seria melhor sempre usar busca binária?
