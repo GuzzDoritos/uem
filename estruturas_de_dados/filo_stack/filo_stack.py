@@ -6,7 +6,7 @@ class Pilha:
         Cria uma pilha vazia com tamanho máximo igual a **tam_max**.
         '''
         self.__elementos = Array(tam_max, None)
-        self.__quantidade = 0
+        self.__topo = 0
 
     def vazia(self) -> bool:
         '''
@@ -22,7 +22,7 @@ class Pilha:
         >>> pilha.vazia()
         True
         '''
-        return True if self.__quantidade == 0 else False
+        return True if self.__topo == 0 else False
 
     def cheia(self) -> bool:
         '''
@@ -37,7 +37,7 @@ class Pilha:
         >>> pilha.cheia()
         True
         '''
-        return True if self.__quantidade == len(self.__elementos) else False
+        return True if self.__topo == len(self.__elementos) else False
 
     def empilha(self, item) -> None:
         '''
@@ -57,11 +57,11 @@ class Pilha:
             ...
         ValueError: Pilha cheia
         '''
-        if self.__quantidade == len(self.__elementos):
+        if self.__topo == len(self.__elementos):
             raise ValueError("Pilha cheia")
 
-        self.__elementos[self.__quantidade] = item
-        self.__quantidade += 1            
+        self.__elementos[self.__topo] = item
+        self.__topo += 1            
     
     def desempilha(self) -> None:
         '''
@@ -87,11 +87,11 @@ class Pilha:
             ...
         ValueError: Pilha vazia.
         '''
-        if self.__quantidade == 0:
+        if self.__topo == 0:
             raise ValueError("Pilha vazia.")
 
-        self.__elementos[self.__quantidade - 1] = None
-        self.__quantidade -= 1
+        self.__elementos[self.__topo - 1] = None
+        self.__topo -= 1
 
     def topo(self):
         '''
@@ -118,7 +118,7 @@ class Pilha:
         if self.vazia():
             raise ValueError("Pilha vazia.")
 
-        return self.__elementos[self.__quantidade - 1]
+        return self.__elementos[self.__topo - 1]
 
     def __str__(self) -> str:
         '''
@@ -127,13 +127,13 @@ class Pilha:
         if self.vazia():
             return "Pilha vazia."
         temp_arr = []
-        for i in range(self.__quantidade):
+        for i in range(self.__topo):
             temp_arr.append(self.__elementos[i])
 
         return f"{str(temp_arr)} <- topo"
 
     def __len__(self) -> int:
-        return self.__quantidade
+        return self.__topo
 
     def esvazia(self) -> None:
         '''
@@ -149,6 +149,4 @@ class Pilha:
         >>> print(pilha)
         Pilha vazia.
         '''
-        for elemento in self.__elementos:
-            elemento = None
-        self.__quantidade = 0
+        self.__topo = 0
