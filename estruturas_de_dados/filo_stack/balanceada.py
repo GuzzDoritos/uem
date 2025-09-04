@@ -37,7 +37,7 @@ def balanceada(expressao: str) -> bool:
     False
     '''
     exp_parenteses = ""
-    
+
     for i in expressao:
         if i == "(" or i == ")":
             exp_parenteses += i
@@ -53,7 +53,7 @@ def balanceada(expressao: str) -> bool:
             except ValueError:
                 return False
     
-    return True if pilha_teste.quantidade == 0 else False
+    return True if len(pilha_teste) == 0 else False
 
 if __name__ == '__main__':
     expressao = input('Escreva a expressão com parênteses a ser verificada: ')

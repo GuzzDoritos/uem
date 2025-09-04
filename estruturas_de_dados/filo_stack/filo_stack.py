@@ -5,8 +5,8 @@ class Pilha:
         '''
         Cria uma pilha vazia com tamanho máximo igual a **tam_max**.
         '''
-        self.pilha = Array(tam_max, None)
-        self.quantidade = 0
+        self.__elementos = Array(tam_max, None)
+        self.__quantidade = 0
 
     def vazia(self) -> bool:
         '''
@@ -22,7 +22,7 @@ class Pilha:
         >>> pilha.vazia()
         True
         '''
-        return True if self.quantidade == 0 else False
+        return True if self.__quantidade == 0 else False
 
     def cheia(self) -> bool:
         '''
@@ -37,7 +37,7 @@ class Pilha:
         >>> pilha.cheia()
         True
         '''
-        return True if self.quantidade == len(self.pilha) else False
+        return True if self.__quantidade == len(self.__elementos) else False
 
     def empilha(self, item) -> None:
         '''
@@ -57,11 +57,11 @@ class Pilha:
             ...
         ValueError: Pilha cheia
         '''
-        if self.quantidade == len(self.pilha):
+        if self.__quantidade == len(self.__elementos):
             raise ValueError("Pilha cheia")
 
-        self.pilha[self.quantidade] = item
-        self.quantidade += 1            
+        self.__elementos[self.__quantidade] = item
+        self.__quantidade += 1            
     
     def desempilha(self) -> None:
         '''
@@ -87,11 +87,11 @@ class Pilha:
             ...
         ValueError: Pilha vazia.
         '''
-        if self.quantidade == 0:
+        if self.__quantidade == 0:
             raise ValueError("Pilha vazia.")
 
-        self.pilha[self.quantidade - 1] = None
-        self.quantidade -= 1
+        self.__elementos[self.__quantidade - 1] = None
+        self.__quantidade -= 1
 
     def topo(self):
         '''
@@ -118,7 +118,7 @@ class Pilha:
         if self.vazia():
             raise ValueError("Pilha vazia.")
 
-        return self.pilha[self.quantidade - 1]
+        return self.__elementos[self.__quantidade - 1]
 
     def __str__(self) -> str:
         '''
@@ -127,10 +127,13 @@ class Pilha:
         if self.vazia():
             return "Pilha vazia."
         temp_arr = []
-        for i in range(self.quantidade):
-            temp_arr.append(self.pilha[i])
+        for i in range(self.__quantidade):
+            temp_arr.append(self.__elementos[i])
 
         return f"{str(temp_arr)} <- topo"
+
+    def __len__(self) -> int:
+        return self.__quantidade
 
     def esvazia(self) -> None:
         '''
@@ -146,6 +149,6 @@ class Pilha:
         >>> print(pilha)
         Pilha vazia.
         '''
-        for elemento in self.pilha:
+        for elemento in self.__elementos:
             elemento = None
-        self.quantidade = 0
+        self.__quantidade = 0
