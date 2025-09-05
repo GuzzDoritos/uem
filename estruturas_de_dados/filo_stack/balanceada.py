@@ -48,10 +48,9 @@ def balanceada(expressao: str) -> bool:
         if j == "(":
             pilha_teste.empilha(1)
         elif j == ")":
-            try:
-                pilha_teste.desempilha()
-            except ValueError:
+            if len(pilha_teste) == 0:
                 return False
+            pilha_teste.desempilha()
     
     return True if len(pilha_teste) == 0 else False
 
