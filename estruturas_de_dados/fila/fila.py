@@ -152,9 +152,9 @@ class Fila:
         if self.vazia():
             return '[]'
         else:
-            resp = f'{self.__elem[self.__inicio]}'
-            for i in range((self.__inicio + 1) % len(self.__elem), self.__fim):
-                resp += f', {self.__elem[i]}'
+            resp = f'[{self.__elem[self.__inicio]}'
+            for i in range((self.__inicio + 1), self.__inicio + self.numero_elementos()):
+                resp += f', {self.__elem[i % len(self.__elem)]}'
             resp += "]"
         return resp
         
