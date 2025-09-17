@@ -13,7 +13,7 @@ class Lista:
         >>> lista1 = Lista(3)
         >>> lista2 = Lista(30)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> lista1.vazia()
         False
         >>> lista2.vazia()
@@ -29,8 +29,8 @@ class Lista:
         >>> lista1 = Lista(9)
         >>> lista2 = Lista(20)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
-        ...     lista2.insere_fim(el)
+        ...     lista1.insere(el)
+        ...     lista2.insere(el)
         >>> lista1.cheia()
         True
         >>> lista2.cheia()
@@ -45,7 +45,7 @@ class Lista:
         >>> aux = [1, 2, 3]
         >>> lista1 = Lista(4)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> print(lista1)
         [1, 2, 3]
         >>> lista1[1]
@@ -55,51 +55,41 @@ class Lista:
             raise ValueError("Posição fora do campo da lista.")
         return self.__elem[pos]
 
-    def insere_fim(self, elem) -> None:
+    def insere(self, elem, pos = None) -> None:
         '''
-        Insere um elemento no final da lista.
-        Exemplos:
-        >>> aux = [1, 2, 3]
+        >>> aux1 = [1, 2, 3]
+        >>> aux2 = [1, 2, 4]
         >>> lista1 = Lista(4)
-        >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        >>> lista2 = Lista(4)
+        >>> for i in range(3):
+        ...     lista1.insere(aux1[i])
+        ...     lista2.insere(aux2[i])
         >>> print(lista1)
         [1, 2, 3]
-        >>> lista1.insere_fim(4)
+        >>> print(lista2)
+        [1, 2, 4]
+        >>> lista1.insere(4)
         >>> print(lista1)
         [1, 2, 3, 4]
-        '''
-        if self.cheia():
-            raise ValueError("Lista cheia.")
-        self.__elem[self.__fim] = elem
-        self.__fim += 1
-
-    def insere_pos(self, elem, pos) -> None:
-        '''
-        Insere um elemento antes da posição *pos*.
-        Exemplos:
-        >>> aux = [1, 2, 4]
-        >>> lista1 = Lista(4)
-        >>> for el in aux:
-        ...     lista1.insere_fim(el)
-        >>> print(lista1)
-        [1, 2, 4]
-        >>> lista1.insere_pos(elem = 3, pos = 2)
-        >>> print(lista1)
+        >>> lista2.insere(3, 2)
+        >>> print(lista2)
         [1, 2, 3, 4]
         '''
         if self.cheia():
             raise ValueError("Lista cheia.")
         
-        if pos >= self.__fim or pos < 0:
-            raise ValueError("Posição fora do campo da lista.")
-        if not self.vazia():
+        if pos == None:
+            self.__elem[self.__fim] = elem
+        else:
+            if pos >= self.__fim or pos < 0:
+                raise ValueError("Posição fora do campo da lista.")
+            
             for i in range(pos, len(self.__elem) - 1):
                 self.__elem[i + 1] = self.__elem[i]
-            self.__elem[pos] = elem
-        else:
-            self.__elem[0] = elem
+                self.__elem[pos] = elem
+        
         self.__fim += 1
+            
 
     def remove_fim(self) -> None:
         '''
@@ -108,7 +98,7 @@ class Lista:
         >>> aux = [1, 2, 3]
         >>> lista1 = Lista(3)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> print(lista1)
         [1, 2, 3]
         >>> lista1.remove_fim()
@@ -126,7 +116,7 @@ class Lista:
         >>> aux = [1, 2, 3]
         >>> lista1 = Lista(3)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> print(lista1)
         [1, 2, 3]
         >>> lista1.remove_pos(1)
@@ -147,17 +137,17 @@ class Lista:
         >>> aux = [1, 2, 3, 4, 5, 6]
         >>> lista1 = Lista(6)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> print(lista1)
         [1, 2, 3, 4, 5, 6]
         >>> lista1.busca(5)
-        True
+        4
         >>> lista1.busca(8)
-        False'''
+        -1'''
         for i in range(self.__fim):
             if elem == self.__elem[i]:
-                return True
-        return False
+                return i
+        return -1
 
     def esvazia(self):
         '''
@@ -166,7 +156,7 @@ class Lista:
         >>> aux = [1, 2, 3, 4, 5, 6]
         >>> lista1 = Lista(6)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> print(lista1)
         [1, 2, 3, 4, 5, 6]
         >>> lista1.esvazia()
@@ -182,7 +172,7 @@ class Lista:
         >>> aux = [1, 2, 3, 4, 5, 6]
         >>> lista1 = Lista(6)
         >>> for el in aux:
-        ...     lista1.insere_fim(el)
+        ...     lista1.insere(el)
         >>> lista1.capacidade()
         6
         '''
