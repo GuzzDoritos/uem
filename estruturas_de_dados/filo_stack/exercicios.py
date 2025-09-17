@@ -81,21 +81,57 @@ def ordena(pilha: Pilha) -> None:
     >>> ordena(pilha1)
     >>> print(pilha1)
     [1, 2, 3] <- topo
+    >>> pilha2 = Pilha(5)
+    >>> pilha2.empilha(5)
+    >>> pilha2.empilha(1)
+    >>> pilha2.empilha(3)
+    >>> pilha2.empilha(4)
+    >>> pilha2.empilha(2)
+    >>> print(pilha2)
+    [5, 1, 3, 4, 2] <- topo
+    >>> ordena(pilha2)
+    >>> print(pilha2)
+    [1, 2, 3, 4, 5] <- topo
+    >>> pilha3 = Pilha(10)
+    >>> lista = [6, 1, 2, 9, 8, 0, 3, 5, 4, 7]
+    >>> for i in lista:
+    ...     pilha3.empilha(i)
+    >>> print(pilha3)
+    [6, 1, 2, 9, 8, 0, 3, 5, 4, 7] <- topo
+    >>> ordena(pilha3)
+    >>> print(pilha3)
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] <- topo
     '''
-    temp = 0
-    pilha_aux = Pilha(len(pilha))
+    p_auxiliar = Pilha(len(pilha))
+
+    temp = pilha.topo()
+    pilha.desempilha()
 
     while not pilha.vazia():
-        temp = pilha.topo()
-        pilha.desempilha()
-        if pilha.topo() < temp:
-            pilha_aux.empilha(temp)
+        if pilha.topo() > temp:
+            p_auxiliar.empilha(pilha.topo())
+            pilha.desempilha()
         else:
-            pilha_aux.empilha(pilha.topo())
-    
-    while not pilha_aux.vazia():
-        pilha.empilha(pilha_aux.topo())
-        pilha_aux.desempilha()
+            p_auxiliar.empilha(temp)
+            temp = pilha.topo()
+            pilha.desempilha()
+
+    pilha.empilha(temp)
+    temp = p_auxiliar.topo()
+    p_auxiliar.desempilha()
+
+    while not p_auxiliar.vazia():
+        if p_auxiliar.topo() > temp:
+            pilha.empilha(temp)
+            temp = p_auxiliar.topo()
+            p_auxiliar.desempilha()
+        else:
+            pilha.empilha(p_auxiliar.topo())
+            p_auxiliar.desempilha()
+    pilha.empilha(temp)
+
+
+
 
 
 
