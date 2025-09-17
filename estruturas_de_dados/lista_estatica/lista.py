@@ -89,45 +89,33 @@ class Lista:
                 self.__elem[pos] = elem
         
         self.__fim += 1
-            
 
-    def remove_fim(self) -> None:
+    def remove(self, pos = None) -> None:
         '''
-        Remove o último elemento da lista.
-        Exemplos:
-        >>> aux = [1, 2, 3]
-        >>> lista1 = Lista(3)
-        >>> for el in aux:
-        ...     lista1.insere(el)
+        >>> aux1 = [1, 2, 3, 4]
+        >>> aux2 = [1, 2, 3, 4]
+        >>> lista1 = Lista(4)
+        >>> lista2 = Lista(4)
+        >>> for i in range(4):
+        ...     lista1.insere(aux1[i])
+        ...     lista2.insere(aux2[i])
+        >>> print(lista1)
+        [1, 2, 3, 4]
+        >>> print(lista2)
+        [1, 2, 3, 4]
+        >>> lista1.remove()
         >>> print(lista1)
         [1, 2, 3]
-        >>> lista1.remove_fim()
-        >>> print(lista1)
-        [1, 2]
+        >>> lista2.remove(2)
+        >>> print(lista2)
+        [1, 2, 4]
         '''
         if self.vazia():
             raise ValueError("Lista vazia.")
-        self.__fim -= 1
-
-    def remove_pos(self, pos) -> None:
-        '''
-        Remove o elemento na posição *pos*.
-        Exemplos:
-        >>> aux = [1, 2, 3]
-        >>> lista1 = Lista(3)
-        >>> for el in aux:
-        ...     lista1.insere(el)
-        >>> print(lista1)
-        [1, 2, 3]
-        >>> lista1.remove_pos(1)
-        >>> print(lista1)
-        [1, 3]
-        '''
-        if self.vazia():
-            raise ValueError("Lista vazia.")
-            
-        for i in range(pos, self.__fim):
-            self.__elem[i] = self.__elem[i + 1]
+        
+        if pos != None:
+            for i in range(pos, self.__fim):
+                self.__elem[i] = self.__elem[i + 1]
         self.__fim -= 1
 
     def busca(self, elem) -> bool:
