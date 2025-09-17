@@ -43,7 +43,7 @@ class Fila:
         >>> fila.numero_elementos()
         1
         '''
-        return self.__fim - self.__inicio + len(self.__elem) % len(self.__elem)
+        return (self.__fim - self.__inicio + len(self.__elem)) % len(self.__elem)
 
     def cheia(self) -> bool:
         '''
