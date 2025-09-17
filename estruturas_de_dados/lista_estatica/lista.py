@@ -175,6 +175,19 @@ class Lista:
         '''
         self.__fim = 0
 
+    def capacidade(self):
+        '''
+        Retorna a capacidade da lista
+        Exemplos:
+        >>> aux = [1, 2, 3, 4, 5, 6]
+        >>> lista1 = Lista(6)
+        >>> for el in aux:
+        ...     lista1.insere_fim(el)
+        >>> lista1.capacidade()
+        6
+        '''
+        return len(self.__elem) - 1
+
     def __str__(self) -> str:
         '''
         Exibe todos os elementos que estão na lista.
