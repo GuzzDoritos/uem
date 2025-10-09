@@ -1,0 +1,7 @@
+1. Identificar a problemática e buscar dados sobre - JP
+
+2. Analisar a concorrência e definir nosso diferencial - GUZZ
+
+3. Definir os recursos financeiros necessários e o modelo de negócio (como vai ganhar money) - PEDRO
+
+4. Viabilidade técnica (arquiterua, soluções técnicas, os algoritmos, IA, Integração com CI/CD) - GABI

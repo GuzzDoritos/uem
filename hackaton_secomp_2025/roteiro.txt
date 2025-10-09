@@ -1,0 +1,94 @@
+1. Abertura / Gancho (30s)
+
+"Se tem algo que une praticamente todos os times de desenvolvimento, é a dificuldade em acertar prazos. Estimar parece simples no papel, mas na prática nunca é. O que vemos é um padrão: os cronogramas são criados em cima de cenários ideais, sem considerar imprevistos, diferenças de produtividade entre desenvolvedores ou o histórico real do time. O resultado? Estourar o prazo acaba sendo quase inevitável."
+
+2. O Problema (40s)
+
+"Hoje, quando um time faz uma estimativa de entrega, normalmente ela parte do ‘melhor cenário possível’. Mas a realidade é bem diferente: sempre existem imprevistos, tarefas mais complexas do que parecem e diferenças entre os próprios desenvolvedores.
+
+E essa é uma questão importante: desenvolvedores não são unidades de trabalho idênticas. Cada um tem seu ritmo, sua especialidade e sua forma de produzir.
+
+O problema é que, sem um histórico confiável, essas diferenças não entram na conta. As decisões acabam sendo tomadas no chute, baseadas em expectativas ou achismos.
+
+No fim das contas, o que foi planejado e o que realmente acontece raramente andam juntos."
+
+3. A Solução – Clary (1min)
+
+“É aí que entra a Clary.
+Uma plataforma de gestão de prazos que se adapta ao seu time através de personalização e algoritmos iterativos.
+
+Como funciona:
+
+Você como gestor cadastra times, com níveis de experiencia e especialidades de cada desenvolvedor.
+
+Cria tarefas do que precisa ser feito, classificadas por tags personalizadas que melhor caracterizam a tarefa, como por exemplo, uma tarefa de "Adicionar nova forma de pagamento", e poderia adicionar tags como "backend", "api externa".
+
+Cada tarefa alimenta o motor de predição, que rapidamente aprende com o histórico do seu time, analisando dados como:
+    - Tempo de conclusão da tarefa
+    - O perfil do desenvolvedor
+    - As tags relacionadas
+
+A partir disso, as tarefas são agrupadas por entregas, que podem se adequar a metodologia do seu time, como por exemplo, entregas por sprint.
+
+O resultado?
+
+Estimativas de prazo mais precisas, adaptadas ao seu contexto.
+
+Sugestões de quais desenvolvedores são mais indicados para cada tarefa, baseado em tarefas passadas.
+
+Alertas e notificações caso o sistema detecte risco de atraso.
+
+A Clary não espera o problema acontecer. Ela é proativa, sugerindo prazos em tempo real e se adaptando a mudanças de escopo.”
+
+4. Mercado (45s)
+
+“O mercado global de software de gestão de projetos vale hoje mais de R$35 bilhões e deve chegar a R$109 bilhões até 2030 (GVR).
+
+No Brasil, temos cerca de 9 mil empresas de desenvolvimento de software (fonte: ABES).
+Se nossa expectativa média é ganhar R$20 mil por ano por empresa, isso representa um mercado alcançável de R$180 milhões.
+
+Nosso objetivo inicial é capturar apenas 2% desse mercado, o que equivale a R$3,5 milhões.”
+
+5. Concorrência e Diferencial (50s)
+
+“Existem concorrentes com presença de mercado, como Jira e Azure DevOps.
+Mas eles têm um problema: são reativos. O Jira, por exemplo, depende de o gestor alimentar manualmente estimativas e só depois gera relatórios.
+
+A Clary vai além:
+
+Predição proativa de prazos baseada no histórico real do time.
+
+Sugestão automática de desenvolvedores para cada tarefa.
+
+Integração simples via API, com serviços de integração contínua ou até mesmo por linha de comando.
+
+Enquanto outros exigem adaptação ao software, a Clary é que se adapta ao seu time.”
+
+6. Modelo de Negócio (30s)
+
+“Nosso modelo é SaaS.
+Oferecemos um período de teste gratuito de 2 meses e planos escaláveis:
+
+Basic: para 1 time.
+
+Standard: até 5 times.
+
+Premium: acima de 5 times, com recursos avançados.
+
+Assim conseguimos atender desde startups até grandes empresas de software.”
+
+7. Tração e Time (35s)
+
+Nosso time é formado por estudantes da UEM em Engenharia de Software e Ciência da Computação, com experiência em desenvolvimento de software.
+Com vontade de empreender e crescer no mercado de software.
+
+Nosso plano é liberar uma versão simplificada da Clary em 6 meses para pequenos times, validando o motor de predição com dados reais de entregas.
+
+
+8. Call to Action / Fechamento (30s)
+
+“Estamos em busca de incubação e parceiros estratégicos para acelerar nosso MVP e validar com as primeiras 10 empresas.
+
+Não deixe seu prazo ser uma aposta — faça dele uma certeza
+
+Muito obrigado!”

@@ -1,0 +1,73 @@
+Plataforma de gestão de prazo, que se adapta ao seu time, através de personalização e algoritmos iterativos.
+
+## Funcionalidades principais ##
+
+- Criação de tags
+    - Definição de estimativa geral
+- Criação e configuração de equipes
+    - Gestor do time configura de acordo com a equipe que ele tem
+        - nº de integrantes
+        - cargos (ex: front, back)
+        - níveis (senior, junior, pleno)
+- Registro das entregas e o tempo que levou
+    - atribuição de entregas por equipe/integrante
+    - Definição de estimativa específica
+
+## Menu principais da plataforma ##
+
+- Criação de times
+- Criação de tags
+- Histórico de tarefas realizadas
+- Dashboard de Andamento
+- Criação das entregas & tarefas
+
+-- Workflow dos devs --
+    1. Recebe a entrega
+    2. Decide em uma tarefa
+    3. Implementa
+    4. Dá commit e push na implementação
+    5. Esse commit se integra ao sistema, registrando o tempo utilizado
+    6. Dev marca tarefa como concluída
+
+- Devs possuem uma estimativa geral e intuitiva
+
+-- Workflow dos managers --
+    1. Define uma entrega (a partir de análise de requisitos e especificação)
+    2. Configura o time
+    3. Define o prazo pra entrega
+    4. Configura e atribui as tarefas para os integrantes (conforme definido em reunião)
+    5. Monitora e acompanha o processo
+    6. Marca entrega como concluída assim que todas as tarefas forem finalizadas
+
+- Managers têm uma estimativa exata e numérica
+
+-- Iteratividade -- 
+
+- Cadastramento de tags conforme necessário
+- Plataforma melhora a precisão da estimativa de prazo conforme vai aumentando a quantidade de registros
+
+-- Algoritmos de Predição --
+    - IA
+        - Sugestões de melhores devs para determinada tarefa/entrega
+        - Sugestões de melhoria
+        - Cálculos de estimativa de prazo
+            - Usando o histórico das entregas finalizadas
+            - Vincula com os modelos matemáticos
+    - Modelos matemáticos
+
+-- Personalizável --
+
+- Capacidade de configurar o time conforme a necessidade da empresa
+- Criar tags customizáveis
+- O prazo é estimado, mas pode ser alterado pelo PM
+- 
+
+-- Adaptabilidade --
+
+- Os prazos se adaptam ao time conforme número de entregas
+- O sistema realiza sugestões que se adequam ao histórico do seu time
+
+-- Telas --
+
+- Home
+- 

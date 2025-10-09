@@ -1,0 +1,50 @@
+Gigantes da gestão de projetos
+
+- Jira
+    - Pontos fortes
+        - Altamente customizavel, integração profunda, robusto para Kanban e Scrum
+    - Como compara
+        - Existe o Log Work, *mas não possui um motor de predição de prazos nativo*. As estimativas no Jira
+        são inseridas manualmente e a previsibilidade vem de relatorios de velocidade, que são reativos
+        não proativos.
+
+- Azure DevOps
+    - Pontos fortes
+        - Solução "tudo em um" para equipes que ja usam ecossistema da Microsoft. Boas ferramentas de
+        planejamento e tracking
+    - Como compara
+        - 
+
+Ferramentas de Gestão com Foco em Usabilidade
+
+- Asuna, Monday ClickUp
+    - Pontos fortes
+    - Como compara
+----
+Foco em Previsão e análise
+
+- Linear, Screenful e Flow
+    - Pontos fortes
+    - Como compara
+
+
+
+
+O Grande diferencial
+
+- Motor de Predição Proativo e Personalizado
+    - Não só olha para o passado, mas também usa esses dados para sugerir prazos futuros
+    - Cruzar as tags com o histórico de performance de cada dev é o molho secreto
+- Sistema de Sugestões de Dev
+    - Na hora de criar uma nova entrega ou tarefa, o sistema sugerirá devs que melhor se enquadram
+    ao contexto e às tags atribuidas
+- Foco Duplo - Intuição do Dev e Precisão do Manager
+    - Dev trabalha com uma estimativa mais intuitiva do dia a dia
+    - Manager consegue dados exatos e numericos para um acompanhamento minucioso
+- IA Como Assistente
+- Adaptabilidade e Aprendizado Contínuo
+
+
+
+############### Modelo de Negócio ################
+

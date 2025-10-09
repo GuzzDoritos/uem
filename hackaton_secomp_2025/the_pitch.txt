@@ -1,0 +1,125 @@
+-- Problema --
+
+- TODO: PENSAR NUM GANCHO
+- Cenário atual/dor do cliente: 
+    - "Você que trabalha 
+    - A realidade geralmente não atende estimativas
+        - Podemos apresentar dados?
+        - Porcentagem de profissionais que afirmam o tempo sempre exceder o prazo
+    - Comentar que a falta de dados históricas é uma das principais causas da imprecisão
+    das estimativas (McConnell)
+    - Citar que a mudança de escopo não é exceção, mas sim a norma (Manifesto Ágil)
+    - Divergências de produtivivade na equipe atrapalha na estimativa real, pois os desenvolvedores são geralmente
+    vistos como "unidades de trabalho" indênticas. (Fred Brooks)
+    - Geralmente o planejamento não condiz com a execução, pois normalmente considera o melhor cenário, sem dar o devido
+    peso aos  possíveis obstáculos, imprevistos e complexidades.
+    - A incerteza é inerente ao desenvolvimento, e acontece primariamente com a ausencia de maiores informações
+    sobre o projeto
+
+-- Solução --
+
+    1. O que é a Clary
+    2. Como funciona
+    3. Como soluciona os problemas
+
+    1. 
+        - Plataforma de gestão de prazo, que se adapta ao seu time, através de personalização e algoritmos iterativos.
+
+    2. 
+        - Através da criação de Times, Entregas e tags
+        - Times
+            - Os devs da time, com seus respectivos níveis e cargos 
+        - Tarefas
+            - Uma unidade de trabalho a ser feita, com prazo definido (um bug a resolver, uma feature a ser implementada etc)
+        - tags
+            - Uma forma de classificar as tarefas que serão realizadas (Bug, Feature, API Externa etc)
+        - Entregas
+            - Conjunto de tarefas relacionadas com um objetivo específico, que
+            possuem um prazo definido pelas tarefas  (Implementar sistema, aprimorar sistema existente)
+
+        - A criação de tarefas envolve também a sugestão personalizada dos melhores devs para cada tarefa.
+
+        - Cada entrega realizada contribui no histórico, que ativamente influencia as estimativas definidas pelo motor de predição
+
+        - Sistema de alerta e notificação caso o motor preveja que a tarefa ou entrega irá atrasar
+    
+    3.
+        - Através dos dados históricos dos times e das tarefas coletados, será possível tomar decisões e 
+        definir estimativas mais precisas
+        - Com as informações das entregas pelos desenvolvedores, poderemos ter análise de desempenho e dessa forma
+        sugerir os melhores desenvolvedores para determinadas tarefas
+        - A ferramenta se adapta ao seu time através das entregas, uma vez que terá uma quantidade maior de dados
+        coletados sobre o seu time
+        - Facilidade de integração
+            - A ferramenta se propôe a diminuir a fricção de aderência pelos desenvolvedores através de uma API aberta
+            onde será possível ser integrado diretamente ao terminal ou a pipeline de CI/CD, ou até mesmo no Discord
+            - Clary vem com templates e tags já precriadas para auxiliar no processo de implementação
+        - A Clary é proativa, em vez de reativa, pois ela sugere ativamente mudanças de estimativa conforme andamento dos processos (TOMAR CUIDADO)
+        - Caso haja mudanças de escopo, a Clary pode sugerir novas estimativas e prazos levando em conta o que os devs já estão fazendo
+        e o que precisará ser feito
+
+-- Mercado --
+
+    - TAM SAM SOM
+
+    - TAM - Mercado Total Endereçável
+        - O mercado atual de software de gerenciamento de projeto foi avaliado em 2022 no valor de R$35,19bi, e até 2030
+        está projetado a alcançar R$109,30bi
+        - Espera-se que a necessidade crescente de software empresariais entre as organizações para reduzir disparidades e caos 
+        lidere o crescimento do mercado.
+    
+    - SAM - Mercado Endereçável Servível
+        - De acordo com a ABES, existem aproximadamente 9 mil empresas de desenvolviemnto de software no Brasil
+        - R$20000 (preço anual por empresa) * 9000 = R$180mi
+
+    - SOM 
+        - 2% de R$180mi = R$3,5mi
+        - Focado no público de devs 
+
+-- Modelo de negócio --
+
+    - SaaS vertical
+    - Período de teste - 2 meses
+    
+    - Planos de acordo com a quantidade de times (1 time Basic, 5 times Standard, 5+ times Premium)
+
+
+-- Tração --
+
+    - Espera começar a atrair o mercado de empresas que realizam desenvolvimento de software
+    - Validação: 
+
+-- Diferencial e Concorrentes --
+
+    - Concorrentes
+        - Atualmente há outras soluções, como Jira e Azure DevOps
+        - Jira
+            - Possui um sistema robusto e integrado 
+            - Como compara
+                - Existe o Log Work, *mas não possui um motor de predição de prazos nativo*. As estimativas no Jira
+                são inseridas manualmente e a previsibilidade vem de relatorios de velocidade, que são reativos
+                não proativos.
+
+        - Azure DevOps
+            - Como compara
+                -  
+ 
+    - Motor de Predição Proativo e Personalizado
+        - Não só olha para o passado, mas também usa esses dados para sugerir prazos futuros
+        - Cruzar as tags com o histórico de performance de cada dev é o molho secreto
+    - Sistema de Sugestões de Dev
+        - Na hora de criar uma nova entrega ou tarefa, o sistema sugerirá devs que melhor se enquadram
+        ao contexto e às tags atribuidas
+    - Foco Duplo - Intuição do Dev e Precisão do Manager
+        - Dev trabalha com uma estimativa mais intuitiva do dia a dia
+        - Manager consegue dados exatos e numericos para um acompanhamento minucioso
+    - IA Como Assistente
+    - Adaptabilidade e Aprendizado Contínuo
+
+-- Time --
+
+    - Estudantes da UEM de Engenharia de Software e Ciência da Computação, com experiência em desenvolvimento de software,
+
+-- Call to Action --
+
+    - Busca de uma incubadora para nos auxiliar a iniciar o desenvolvimento desse projeto 

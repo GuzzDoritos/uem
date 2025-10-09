@@ -1,0 +1,20 @@
+
+-- View do Manager --
+
+    - Dashboard de Andamento
+    - Notificações/Alerta
+    - Configurar times e entregas
+    - Configurar tags
+    - Estimativa em hora das tarefas e entregas
+    - Sugestão de devs para tarefa
+
+-- View do Dev --
+
+    - Tela Inicial: Lista de Entregas e Tarefas
+    - Adicionar comentários às tarefas
+    - Comandos CLI para interagir com a plataforma
+    - Interação pela interface
+    - Integração com VSCode e IDEs *futuro
+
+
+
