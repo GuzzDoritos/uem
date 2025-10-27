@@ -100,13 +100,13 @@ class Deque:
     def insere_direita(self, elemento):
         '''Insere um elemento na ponta direita da deque.
         >>> deque = Deque()
-        >>> deque.insere_esquerda(30)
+        >>> deque.insere_direita(10)
         >>> print(deque)
-        [30]
-        >>> deque.insere_esquerda(20)
+        [10]
+        >>> deque.insere_direita(20)
         >>> print(deque)
-        [20, 30]
-        >>> deque.insere_esquerda(10)
+        [10, 20]
+        >>> deque.insere_direita(30)
         >>> print(deque)
         [10, 20, 30]
         '''
