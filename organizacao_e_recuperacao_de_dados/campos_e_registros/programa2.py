@@ -3,7 +3,10 @@ def main():
 
 def le_campos():
     NOME_ARQ = input('Informe o nome do arquivo a ser lido: ')
-    ENTRADA = open(NOME_ARQ, 'r')
+    try:
+        ENTRADA = open(NOME_ARQ, 'r')
+    except:
+        raise FileNotFoundError(f"Arquivo {NOME_ARQ} não encontrado no diretório.")
     contador = 1
     CAMPO = leia_campo(ENTRADA)
     while CAMPO:
