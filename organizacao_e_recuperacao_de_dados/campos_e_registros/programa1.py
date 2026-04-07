@@ -6,11 +6,11 @@ def escreve_campos():
     saida = open(FILE_NAME, 'w', encoding='utf-8')
     SOBRENOME = input('Informe o seu sobrenome')
     listaInfo = [
-        'Digite o seu nome:', 
-        'Digite a sua cidade', 
-        'Digite o seu endereço', 
-        'Digite o seu estado', 
-        'Digite o seu CEP']
+        'Digite o seu nome: ', 
+        'Digite a sua cidade: ', 
+        'Digite o seu endereço: ', 
+        'Digite o seu estado: ', 
+        'Digite o seu CEP: ']
 
     while SOBRENOME:
         infoValores = []
