@@ -2,7 +2,7 @@ def main():
     escreve_registros()
 
 def escreve_registros():
-    NOME_ARQ = input('Informe o nome do arquivo a ser lido: ')
+    NOME_ARQ = input('Informe o nome do arquivo a ser escrito: ')
     try:
         SAIDA = open(NOME_ARQ, 'wb')
     except:
