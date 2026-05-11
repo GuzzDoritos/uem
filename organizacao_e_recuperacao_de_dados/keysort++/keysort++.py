@@ -12,9 +12,15 @@ SIZEOF_TAMREG = calcsize(FORMATO_TAMREG)            # 2 bytes
 # passo 1: leia os registros do arquivo de entrada e retorne uma lista de tuplas (chave, valor)
 # utilize os formatos FORMATO_HEADER e FORMATO_TAMREG para fazer o unpack dos dados lidos do arquivo de entrada
 def leia_registros(nome_arq_entrada: str ) -> list[tuple[int, int]]:
-	arq = open(nome_arq_entrada, 'rb')
-	total_reg = unpack(FORMATO_HEADER, arq.read(SIZEOF_HEADER))
-	print(total_reg)
+    arq = open(nome_arq_entrada, 'rb')
+    total_de_reg_bytes = arq.read(SIZEOF_HEADER)
+    total_de_reg = unpack(FORMATO_HEADER, total_de_reg_bytes)[0]
+	
+    lista = []
+
+    for i in range(total_de_reg):
+        tam_reg = unpack(FORMATO_TAMREG, arq.read(SIZEOF_TAMREG))
+    
 
 # passo 3: escreva os registros no arquivo de saída de acordo com a ordem dada pela lista ordenada
 # lembre-se de manter o mesmo formato do arquivo de entrada
