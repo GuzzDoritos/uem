@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Jogo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        main {
+            max-width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Cadastro de Jogo Favorito</h1>
+        <p>Preencha os campos abaixo para cadastrar o seu jogo favorito na nossa comunidade de jogos digitais.</p>
+    </header>
+
+    <main>
+        <form action="#" method="post">
+
+            <fieldset>
+                <legend>1) Dados do Usuário</legend>
+
+                <p>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" required>
+                </p>
+
+                <p>
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
+                </p>
+
+                <p>
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" required>
+                </p>
+
+                <p>
+                    <label for="data-nascimento">Data de Nascimento:</label>
+                    <input type="date" id="data-nascimento" name="data_nascimento" required>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>2) Informações sobre o Jogo</legend>
+
+                <p>
+                    <label for="nome-jogo">Nome do Jogo:</label>
+                    <input type="text" id="nome-jogo" name="nome_jogo" required>
+                </p>
+
+                <p>
+                    <label for="genero-favorito">Gênero Favorito:</label>
+                    <select id="genero-favorito" name="genero_favorito" required>
+                        <option value="" disabled selected>Selecione um gênero</option>
+                        <option value="acao">Ação</option>
+                        <option value="aventura">Aventura</option>
+                        <option value="rpg">RPG</option>
+                        <option value="estrategia">Estratégia</option>
+                        <option value="simulacao">Simulação</option>
+                        <option value="esportes">Esportes</option>
+                    </select>
+                </p>
+
+                <fieldset>
+                    <legend>Plataforma (escolha apenas uma):</legend>
+                    <input type="radio" id="plat-pc" name="plataforma" value="pc" required>
+                    <label for="plat-pc">PC</label><br>
+
+                    <input type="radio" id="plat-ps5" name="plataforma" value="ps5">
+                    <label for="plat-ps5">PlayStation 5</label><br>
+
+                    <input type="radio" id="plat-xbox" name="plataforma" value="xbox">
+                    <label for="plat-xbox">Xbox Series X/S</label><br>
+
+                    <input type="radio" id="plat-switch" name="plataforma" value="switch">
+                    <label for="plat-switch">Nintendo Switch</label><br>
+
+                    <input type="radio" id="plat-mobile" name="plataforma" value="mobile">
+                    <label for="plat-mobile">Dispositivos Móveis (Mobile)</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Características Favoritas em um Jogo (escolha várias):</legend>
+                    <input type="checkbox" id="carac-historia" name="caracteristicas" value="historia">
+                    <label for="carac-historia">História profunda e envolvente</label><br>
+
+                    <input type="checkbox" id="carac-graficos" name="caracteristicas" value="graficos">
+                    <label for="carac-graficos">Gráficos realistas</label><br>
+
+                    <input type="checkbox" id="carac-trilha" name="caracteristicas" value="trilha">
+                    <label for="carac-trilha">Trilha sonora marcante</label><br>
+
+                    <input type="checkbox" id="carac-multiplayer" name="caracteristicas" value="multiplayer">
+                    <label for="carac-multiplayer">Modo multijogador</label><br>
+
+                    <input type="checkbox" id="carac-mundo-aberto" name="caracteristicas" value="mundo_aberto">
+                    <label for="carac-mundo-aberto">Mundo aberto</label><br>
+
+                    <input type="checkbox" id="carac-jogabilidade" name="caracteristicas" value="jogabilidade">
+                    <label for="carac-jogabilidade">Jogabilidade desafiadora</label>
+                </fieldset>
+
+                <p>
+                    <label for="nota-jogo">Nota do Jogo (0 a 10):</label>
+                    <input type="range" id="nota-jogo" name="nota_jogo" min="0" max="10" step="1" value="5">
+                </p>
+
+                <p>
+                    <label for="horas-jogadas">Quantidade de Horas Jogadas na Semana (0 a 100):</label>
+                    <input type="number" id="horas-jogadas" name="horas_jogadas" min="0" max="100" value="0">
+                </p>
+
+                <p>
+                    <label for="cor-interface">Cor Favorita para Interface do Jogo:</label>
+                    <input type="color" id="cor-interface" name="cor_interface" value="#0055ff">
+                </p>
+
+                <p>
+                    <label for="comentario-jogo">Comentário sobre o Jogo:</label><br>
+                    <textarea id="comentario-jogo" name="comentario_jogo" rows="5" cols="50"
+                        placeholder="Deixe aqui seu comentário sobre o jogo..."></textarea>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>3) Autocomplete</legend>
+                <p>
+                    <label for="desenvolvedora">Desenvolvedora Favorita:</label>
+                    <input type="text" id="desenvolvedora" name="desenvolvedora" list="lista-desenvolvedoras"
+                        placeholder="Comece a digitar...">
+                    <datalist id="lista-desenvolvedoras">
+                        <option value="Nintendo">
+                        <option value="Valve">
+                        <option value="FromSoftware">
+                        <option value="Rockstar Games">
+                        <option value="CD Projekt Red">
+                        <option value="Capcom">
+                    </datalist>
+                </p>
+            </fieldset>
+
+            <fieldset>
+                <legend>4) Ações do Formulário</legend>
+                <button type="submit">Enviar Formulário</button>
+                <button type="reset">Limpar Formulário</button>
+            </fieldset>
+
+        </form>
+    </main>
+
+</body>
+
+</html>
