@@ -9,8 +9,6 @@
 (define ana (aluno 13579 "ana" 5 6 4 5 20))
 
 (define (aprovacao-aluno dados-aluno nota-aprovacao carga-horaria percentual-maximo-faltas)
-  (unless (positive? carga-horaria)
-    (raise-argument-error 'aprovacao-aluno "positive number" carga-horaria))
   (define media
     (/ (+ (aluno-nota1 dados-aluno)
           (aluno-nota2 dados-aluno)
