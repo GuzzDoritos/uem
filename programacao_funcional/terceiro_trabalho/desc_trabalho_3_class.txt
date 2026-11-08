@@ -1,0 +1,6 @@
+Leiam atentamente o arquivo de especificação.
+Os arquivos de textos dentro do arquivo texto.zip servem como entrada para o programa, enquanto os arquivos output.zip são as saídas geradas por cada um dos arquivos de entrada.
+Por exemplo:
+O arquivo whitman-leaves.txt dentro de output.zip corresponde a contagem de palavras do arquivo de mesmo nome (whitman-leaves.txt) dentro do arquivo textos.zip
+
+Por fim, o arquivo base.rkt possui é o arquivo para auxiliar no inicio do desenvolvimento, cujo o uso é opcional (mas fortemente recomendado)
