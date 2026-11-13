@@ -1,0 +1,34 @@
+[
+  {
+    "id": "craft_stone_axe",
+    "ingredientA": "stick_wood",
+    "ingredientB": "sharp_rock",
+    "resultItemId": "stone_axe",
+    "meatCost": 0,
+    "description": "Amarre a Pedra Afiada no Galho Reto para forjar um Machado de Pedra Artesanal (+6 Ataque, +3 Muscle)."
+  },
+  {
+    "id": "craft_reinforced_tunic",
+    "ingredientA": "cardboard_vest",
+    "ingredientB": "leather_scrap",
+    "resultItemId": "reinforced_tunic",
+    "meatCost": 10,
+    "description": "Costure Retalho de Couro sobre o Colete de Papelão para obter uma Túnica de Couro Reforçada (+6 Defesa, +10 HP Máx)."
+  },
+  {
+    "id": "craft_spaghetti_plate",
+    "ingredientA": "raw_noodles",
+    "ingredientB": "spicy_sauce",
+    "resultItemId": "spaghetti_plate",
+    "meatCost": 0,
+    "description": "Combine Massa Crua Seca e Molho Picante Ancestral para preparar um Prato de Espaguete Real (+22 HP, +12 MP)."
+  },
+  {
+    "id": "craft_cargo_pants",
+    "ingredientA": "stick_wood",
+    "ingredientB": "leather_scrap",
+    "resultItemId": "cargo_pants",
+    "meatCost": 5,
+    "description": "Use um Galho Reto como molde para costurar uma Calça de Aventureiro com Retalho de Couro (+2 Defesa, +2 Moxie)."
+  }
+]

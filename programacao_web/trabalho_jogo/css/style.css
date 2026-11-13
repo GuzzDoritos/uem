@@ -1,0 +1,673 @@
+/* ==========================================================================
+   Kingdom of Loathing — Protótipo Acadêmico (UEM)
+   Estética estritamente P&B minimalista: fundo branco + linhas pretas simples
+   ========================================================================== */
+
+:root {
+  --bg-page: #ffffff;
+  --fg-ink: #000000;
+  --fg-muted: #333333;
+  --border-thin: 1px solid #000000;
+  --border-thick: 2px solid #000000;
+  --sidebar-width: 220px;
+  --font-main: Arial, Verdana, Helvetica, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-page);
+  color: var(--fg-ink);
+  font-family: var(--font-main);
+  font-size: 13px;
+  line-height: 1.45;
+  height: 100%;
+}
+
+button,
+input,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--fg-ink);
+}
+
+/* Layout Principal (2 colunas: sidebar esquerda + coluna direita) */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  max-width: 1120px;
+  margin: 0 auto;
+  border-left: var(--border-thin);
+  border-right: var(--border-thin);
+  background: var(--bg-page);
+}
+
+/* Barra Lateral Esquerda (Character / Stats Pane) */
+.char-pane {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  border-right: var(--border-thick);
+  padding: 12px 10px;
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.char-pane.is-disabled {
+  opacity: 0.55;
+}
+
+.char-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.char-avatar {
+  width: 58px;
+  height: 70px;
+  border: var(--border-thin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #ffffff;
+}
+
+.char-identity {
+  min-width: 0;
+}
+
+.char-name {
+  font-weight: bold;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.char-meta {
+  font-size: 12px;
+}
+
+.kol-divider {
+  border: 0;
+  border-top: var(--border-thin);
+  margin: 2px 0;
+}
+
+/* Atributos */
+.stats-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.stat-label {
+  font-weight: normal;
+}
+
+.stat-value {
+  font-weight: bold;
+}
+
+.substat-bar {
+  width: 100%;
+  height: 7px;
+  border: var(--border-thin);
+  background: #ffffff;
+}
+
+.substat-fill {
+  height: 100%;
+  width: 0%;
+  background: #000000;
+  transition: width 0.2s ease;
+}
+
+/* Recursos 2x2 */
+.resources-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.resource-cell {
+  border: var(--border-thin);
+  padding: 5px 4px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.res-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+
+.res-text {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.res-caption {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Missão / Última Aventura / Score */
+.quest-block,
+.score-block {
+  text-align: center;
+}
+
+.sidebar-heading {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.sidebar-text {
+  font-size: 12px;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: var(--font-mono);
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.link-button:disabled {
+  text-decoration: none;
+  cursor: default;
+  color: var(--fg-muted);
+}
+
+/* Coluna Direita */
+.right-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra Superior (Top Menu Pane) */
+.top-pane {
+  border-bottom: var(--border-thick);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--bg-page);
+}
+
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  background: #ffffff;
+  border: var(--border-thin);
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.nav-btn:hover:not(:disabled),
+.nav-btn:focus-visible:not(:disabled),
+.nav-btn.is-active {
+  background: #000000;
+  color: #ffffff;
+  outline: none;
+}
+
+.nav-btn:hover:not(:disabled) svg,
+.nav-btn:focus-visible:not(:disabled) svg,
+.nav-btn.is-active svg {
+  stroke: #ffffff;
+}
+
+.nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.moons-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.moons-caption {
+  margin-top: 1px;
+}
+
+/* Painel Central (Main Pane) */
+.main-pane {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+.toast-banner {
+  border: var(--border-thick);
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  background: #ffffff;
+  font-weight: bold;
+}
+
+.view-container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Caixas Estilo Kingdom of Loathing */
+.kol-box {
+  border: var(--border-thin);
+  background: #ffffff;
+  margin-bottom: 16px;
+}
+
+.kol-box-header {
+  border-bottom: var(--border-thick);
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+  background: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kol-box-body {
+  padding: 14px;
+}
+
+/* Botões Padrão P&B */
+.kol-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #ffffff;
+  border: var(--border-thin);
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+
+.kol-btn:hover:not(:disabled),
+.kol-btn:focus-visible:not(:disabled) {
+  background: #000000;
+  color: #ffffff;
+  outline: none;
+}
+
+.kol-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.kol-btn-primary {
+  border-width: 2px;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Tela Inicial */
+.title-hero {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.title-hero h1 {
+  margin: 6px 0 4px;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+}
+
+.title-subtitle {
+  margin: 0;
+  font-size: 13px;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-field label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.kol-input,
+.kol-select {
+  width: 100%;
+  max-width: 340px;
+  padding: 6px 8px;
+  border: var(--border-thin);
+  background: #ffffff;
+}
+
+.class-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.class-card {
+  border: var(--border-thin);
+  padding: 10px;
+  cursor: pointer;
+  background: #ffffff;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.class-card.is-selected {
+  border-width: 2px;
+  background: #000000;
+  color: #ffffff;
+}
+
+.class-card-title {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.class-card-stats {
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* Mapa Estilo KoL */
+.map-canvas {
+  position: relative;
+  border: var(--border-thin);
+  height: 330px;
+  background: #ffffff;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.map-bg-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.map-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: var(--border-thin);
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 122px;
+  text-align: center;
+}
+
+.map-node:hover:not(:disabled),
+.map-node:focus-visible:not(:disabled) {
+  background: #000000;
+  color: #ffffff;
+  outline: none;
+}
+
+.map-node:hover:not(:disabled) svg,
+.map-node:focus-visible:not(:disabled) svg {
+  stroke: #ffffff;
+}
+
+.map-node-boss {
+  border-width: 2px;
+}
+
+.map-node-title {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.map-node-level {
+  font-size: 10px;
+}
+
+.map-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.map-list-row {
+  border: var(--border-thin);
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Cena de Combate */
+.combat-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.enemy-portrait {
+  width: 140px;
+  height: 120px;
+  border: var(--border-thin);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.enemy-hp-wrap {
+  width: 260px;
+  max-width: 100%;
+}
+
+.hp-bar-outer {
+  width: 100%;
+  height: 12px;
+  border: var(--border-thin);
+  background: #ffffff;
+}
+
+.hp-bar-inner {
+  height: 100%;
+  background: #000000;
+  transition: width 0.2s ease;
+}
+
+.combat-log {
+  border: var(--border-thin);
+  padding: 10px;
+  max-height: 170px;
+  overflow-y: auto;
+  background: #ffffff;
+  margin-bottom: 12px;
+}
+
+.combat-log p {
+  margin: 0 0 6px;
+}
+
+.combat-log p:last-child {
+  margin-bottom: 0;
+  font-weight: bold;
+}
+
+.combat-item-picker {
+  border-top: var(--border-thin);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+/* Tabelas Simples KoL (Inventário, Crafting, Score) */
+.kol-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+
+.kol-table th,
+.kol-table td {
+  border: var(--border-thin);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.kol-table th {
+  font-weight: bold;
+  border-bottom: var(--border-thick);
+}
+
+.two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.craft-select-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.craft-plus {
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}
+
+.kbd-tag {
+  display: inline-block;
+  border: var(--border-thin);
+  padding: 0 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.endgame-banner {
+  border: var(--border-thick);
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.endgame-banner h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.muted-note {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+/* Responsividade simples para telas estreitas */
+@media (max-width: 760px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .char-pane {
+    width: 100%;
+    border-right: none;
+    border-bottom: var(--border-thick);
+  }
+
+  .two-col-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-canvas {
+    height: auto;
+    min-height: 220px;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .map-node {
+    position: static;
+    transform: none;
+    min-width: 0;
+  }
+
+  .craft-select-row {
+    grid-template-columns: 1fr;
+  }
+}

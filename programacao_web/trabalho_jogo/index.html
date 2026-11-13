@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingdom of Loathing — Protótipo Web</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/dataLoader.js"></script>
+  <script defer src="js/state.js"></script>
+  <script defer src="js/inventory.js"></script>
+  <script defer src="js/combat.js"></script>
+  <script defer src="js/events.js"></script>
+  <script defer src="js/ui.js"></script>
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <div id="app-layout" class="app-layout">
+    <!-- Barra Lateral Esquerda: Status e Ficha do Personagem -->
+    <aside id="char-pane" class="char-pane" aria-label="Status do Personagem">
+      <div class="char-header">
+        <div id="char-avatar" class="char-avatar" aria-hidden="true"></div>
+        <div class="char-identity">
+          <div id="char-name" class="char-name">Aventureiro</div>
+          <div id="char-level" class="char-meta">Level 1</div>
+          <div id="char-class" class="char-meta">Sem Classe</div>
+        </div>
+      </div>
+
+      <hr class="kol-divider" />
+
+      <section class="stats-block" aria-label="Atributos">
+        <div class="stat-row">
+          <div class="stat-line">
+            <span class="stat-label">Muscle:</span>
+            <span id="stat-muscle" class="stat-value">0</span>
+          </div>
+          <div class="substat-bar" title="Progresso para o próximo ponto de Muscle">
+            <div id="substat-muscle-fill" class="substat-fill"></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-line">
+            <span class="stat-label">Mysticality:</span>
+            <span id="stat-mysticality" class="stat-value">0</span>
+          </div>
+          <div class="substat-bar" title="Progresso para o próximo ponto de Mysticality">
+            <div id="substat-mysticality-fill" class="substat-fill"></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-line">
+            <span class="stat-label">Moxie:</span>
+            <span id="stat-moxie" class="stat-value">0</span>
+          </div>
+          <div class="substat-bar" title="Progresso para o próximo ponto de Moxie">
+            <div id="substat-moxie-fill" class="substat-fill"></div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="kol-divider" />
+
+      <section class="resources-grid" aria-label="Recursos">
+        <div class="resource-cell" title="Pontos de Vida (HP)">
+          <span class="res-icon" id="icon-hp" aria-hidden="true"></span>
+          <div id="res-hp" class="res-text">0 / 0</div>
+          <div class="res-caption">HP</div>
+        </div>
+        <div class="resource-cell" title="Pontos Mágicos (MP)">
+          <span class="res-icon" id="icon-mp" aria-hidden="true"></span>
+          <div id="res-mp" class="res-text">0 / 0</div>
+          <div class="res-caption">MP</div>
+        </div>
+        <div class="resource-cell" title="Meat (Moeda)">
+          <span class="res-icon" id="icon-meat" aria-hidden="true"></span>
+          <div id="res-meat" class="res-text">0</div>
+          <div class="res-caption">Meat</div>
+        </div>
+        <div class="resource-cell" title="Aventuras / Turnos Restantes">
+          <span class="res-icon" id="icon-adv" aria-hidden="true"></span>
+          <div id="res-adv" class="res-text">0</div>
+          <div class="res-caption">Adventures</div>
+        </div>
+      </section>
+
+      <hr class="kol-divider" />
+
+      <section class="quest-block">
+        <div class="sidebar-heading">Current Quest:</div>
+        <div id="char-quest" class="sidebar-text">Iniciar sua jornada</div>
+      </section>
+
+      <section class="quest-block">
+        <div class="sidebar-heading">Last Adventure:</div>
+        <button id="btn-last-adventure" class="link-button" type="button" disabled>
+          (nenhuma ainda)
+        </button>
+      </section>
+
+      <hr class="kol-divider" />
+
+      <section class="score-block">
+        <div class="sidebar-heading">Score:</div>
+        <div id="char-score" class="score-value">0</div>
+      </section>
+    </aside>
+
+    <!-- Coluna Direita: Barra Superior + Painel Central -->
+    <div id="right-column" class="right-column">
+      <header id="top-pane" class="top-pane">
+        <nav class="top-nav" aria-label="Menu Principal">
+          <button type="button" class="nav-btn" data-nav="map" title="Abrir Mapa (Tecla M)">
+            <span class="nav-icon" id="nav-icon-map" aria-hidden="true"></span>
+            <span class="nav-label">[M] Mapa</span>
+          </button>
+          <button type="button" class="nav-btn" data-nav="inventory" title="Abrir Inventário (Tecla I)">
+            <span class="nav-icon" id="nav-icon-inv" aria-hidden="true"></span>
+            <span class="nav-label">[I] Inventário</span>
+          </button>
+          <button type="button" class="nav-btn" data-nav="crafting" title="Abrir Crafting (Tecla C)">
+            <span class="nav-icon" id="nav-icon-craft" aria-hidden="true"></span>
+            <span class="nav-label">[C] Crafting</span>
+          </button>
+          <button type="button" class="nav-btn" data-nav="camp" title="Acampamento / Descansar (Tecla R)">
+            <span class="nav-icon" id="nav-icon-camp" aria-hidden="true"></span>
+            <span class="nav-label">[R] Acampamento</span>
+          </button>
+          <button type="button" class="nav-btn" data-nav="help" title="Ajuda e Controles (Tecla H ou Esc)">
+            <span class="nav-icon" id="nav-icon-help" aria-hidden="true"></span>
+            <span class="nav-label">[H] Ajuda</span>
+          </button>
+          <button type="button" class="nav-btn nav-btn-reset" data-nav="restart" title="Reiniciar Partida">
+            <span class="nav-icon" id="nav-icon-reset" aria-hidden="true"></span>
+            <span class="nav-label">Reiniciar</span>
+          </button>
+        </nav>
+
+        <div class="moons-widget" title="As duas luas de Kingdom of Loathing: Ronald e Grimace">
+          <svg width="56" height="28" viewBox="0 0 56 28" aria-hidden="true">
+            <circle cx="14" cy="14" r="9" fill="#ffffff" stroke="#000000" stroke-width="1.8" />
+            <path d="M14 5 A9 9 0 0 0 14 23 A5.5 9 0 0 1 14 5 Z" fill="#000000" />
+            <circle cx="28" cy="14" r="1.6" fill="#000000" />
+            <circle cx="42" cy="14" r="9" fill="#ffffff" stroke="#000000" stroke-width="1.8" />
+            <path d="M42 5 A9 9 0 0 1 42 23 A5.5 9 0 0 0 42 5 Z" fill="#000000" />
+          </svg>
+          <div class="moons-caption">Ronald &bull; Grimace</div>
+        </div>
+      </header>
+
+      <main id="main-pane" class="main-pane">
+        <div id="toast-banner" class="toast-banner" role="status" aria-live="polite" hidden></div>
+        <div id="view-container" class="view-container"></div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+[
+  {
+    "id": "wild_pinecone",
+    "name": "Pinha Selvagem Raivosa",
+    "isBoss": false,
+    "hp": 14,
+    "attack": 4,
+    "defense": 1,
+    "meatDrop": [10, 18],
+    "statGain": { "muscle": 2, "mysticality": 1, "moxie": 1 },
+    "drops": [
+      { "itemId": "stick_wood", "chance": 0.65 },
+      { "itemId": "meat_paste_snack", "chance": 0.35 }
+    ],
+    "introText": "Uma pinha com olhos rabiscados rola da copa das árvores e bloqueia a trilha!",
+    "attackText": "A pinha gira rapidamente e espeta suas canelas.",
+    "defeatText": "A pinha se desmonta em gravetos inofensivos.",
+    "specialOnZeroHp": null,
+    "image": null
+  },
+  {
+    "id": "skeleton_intern",
+    "name": "Esqueleto Estagiário",
+    "isBoss": false,
+    "hp": 18,
+    "attack": 5,
+    "defense": 2,
+    "meatDrop": [14, 24],
+    "statGain": { "muscle": 2, "mysticality": 2, "moxie": 1 },
+    "drops": [
+      { "itemId": "sharp_rock", "chance": 0.6 },
+      { "itemId": "cardboard_vest", "chance": 0.3 }
+    ],
+    "introText": "Um esqueleto carregando uma prancheta pergunta se você assinou o termo de aventura!",
+    "attackText": "Ele golpeia você com uma pilha burocrática de ossos e papel.",
+    "defeatText": "O esqueleto bate o ponto de saída e desaba em paz.",
+    "specialOnZeroHp": null,
+    "image": null
+  },
+  {
+    "id": "goblin_barista",
+    "name": "Goblin Barista Hipster",
+    "isBoss": false,
+    "hp": 20,
+    "attack": 6,
+    "defense": 2,
+    "meatDrop": [18, 30],
+    "statGain": { "muscle": 1, "mysticality": 2, "moxie": 3 },
+    "drops": [
+      { "itemId": "espresso_shot", "chance": 0.65 },
+      { "itemId": "raw_noodles", "chance": 0.45 },
+      { "itemId": "colander_hat", "chance": 0.25 }
+    ],
+    "introText": "Um goblin de avental preto ajusta os óculos sem lente e prepara um ataque artesanal!",
+    "attackText": "Ele arremessa espuma de leite fervendo na sua direção.",
+    "defeatText": "O goblin derruba a prensa francesa e foge reclamando dos clientes.",
+    "specialOnZeroHp": null,
+    "image": null
+  },
+  {
+    "id": "barroom_brawler",
+    "name": "Brigão da Taverna",
+    "isBoss": false,
+    "hp": 24,
+    "attack": 7,
+    "defense": 3,
+    "meatDrop": [22, 35],
+    "statGain": { "muscle": 3, "mysticality": 1, "moxie": 2 },
+    "drops": [
+      { "itemId": "leather_scrap", "chance": 0.65 },
+      { "itemId": "cargo_pants", "chance": 0.3 }
+    ],
+    "introText": "Um sujeito palito musculoso derruba a mesa mais próxima e parte para cima!",
+    "attackText": "Ele acerta um soco pesado com um banco de madeira.",
+    "defeatText": "O brigão tropeça na própria capa de caderno e pede a conta.",
+    "specialOnZeroHp": null,
+    "image": null
+  },
+  {
+    "id": "temple_gargoyle",
+    "name": "Gárgula de Giz",
+    "isBoss": false,
+    "hp": 28,
+    "attack": 8,
+    "defense": 4,
+    "meatDrop": [28, 42],
+    "statGain": { "muscle": 2, "mysticality": 3, "moxie": 2 },
+    "drops": [
+      { "itemId": "spicy_sauce", "chance": 0.55 },
+      { "itemId": "ancient_tonic", "chance": 0.45 },
+      { "itemId": "lucky_bottle_cap", "chance": 0.3 }
+    ],
+    "introText": "Uma estátua desenhada em giz branco cria vida ao sentir sua presença!",
+    "attackText": "A gárgula mergulha do pedestal e risca sua armadura com garras afiadas.",
+    "defeatText": "A gárgula vira uma nuvem de pó de giz no chão das ruínas.",
+    "specialOnZeroHp": null,
+    "image": null
+  },
+  {
+    "id": "spaghetti_baron",
+    "name": "Barão do Espaguete Supremo",
+    "isBoss": true,
+    "hp": 45,
+    "attack": 10,
+    "defense": 5,
+    "meatDrop": [100, 150],
+    "statGain": { "muscle": 5, "mysticality": 5, "moxie": 5 },
+    "drops": [],
+    "introText": "O Barão do Espaguete Supremo ergue um garfo colossal no topo do pico! A batalha final começou!",
+    "attackText": "O Barão chicoteia você com tentáculos de macarrão escaldante!",
+    "defeatText": "O Barão solta o garfo real e desmorona sobre uma montanha de massa!",
+    "specialOnZeroHp": {
+      "recoilDamage": 5,
+      "text": "Ao cair, o Barão explode em uma nuvem escaldante de molho fervente, causando 5 de dano final!"
+    },
+    "image": null
+  }
+]

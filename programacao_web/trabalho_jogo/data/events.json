@@ -1,0 +1,160 @@
+[
+  {
+    "id": "hollow_tree",
+    "title": "O Tronco Oco Misterioso",
+    "text": "Entre as árvores desenhadas a lápis, você encontra um tronco oco com algo brilhando lá dentro.",
+    "choices": [
+      {
+        "label": "Vasculhar o fundo do tronco com cuidado",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Você encontra um galho firme e uma pedra afiada escondidos no musgo.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 5,
+          "giveItems": ["stick_wood", "sharp_rock"],
+          "statGain": { "muscle": 1, "moxie": 1 },
+          "triggerEndgame": null
+        }
+      },
+      {
+        "label": "Experimentar os cogumelos luminosos da borda",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Eles têm gosto de sopa instantânea! Você se sente revigorado.",
+          "hpDelta": 8,
+          "mpDelta": 6,
+          "meatDelta": 0,
+          "giveItems": [],
+          "statGain": { "mysticality": 2 },
+          "triggerEndgame": null
+        }
+      }
+    ],
+    "image": null
+  },
+  {
+    "id": "tavern_quiz",
+    "title": "Desafio do Taverneiro",
+    "text": "O taverneiro limpa um copo invisível e oferece trabalho rápido ou um prato especial.",
+    "choices": [
+      {
+        "label": "Ajudar a lavar a louça da taverna",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Você lava pratos em tempo recorde e ganha gorjeta e sobras de massa.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 25,
+          "giveItems": ["raw_noodles"],
+          "statGain": { "muscle": 1, "moxie": 1 },
+          "triggerEndgame": null
+        }
+      },
+      {
+        "label": "Comprar o Prato Especial do Dia (15 Meat)",
+        "costMeat": 15,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Você guarda um belo Prato de Espaguete Real na mochila para emergências.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 0,
+          "giveItems": ["spaghetti_plate"],
+          "statGain": { "mysticality": 1 },
+          "triggerEndgame": null
+        }
+      },
+      {
+        "label": "Pegar um café esquecido no balcão",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Ainda está morno! Você guarda o Café Expresso Duplo.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 0,
+          "giveItems": ["espresso_shot"],
+          "statGain": { "moxie": 1 },
+          "triggerEndgame": null
+        }
+      }
+    ],
+    "image": null
+  },
+  {
+    "id": "ancient_altar",
+    "title": "O Altar das Linhas Pretas",
+    "text": "No centro das ruínas há um altar geométrico com um medalhão antigo encaixado na pedra.",
+    "choices": [
+      {
+        "label": "Fazer uma prece silenciosa diante do altar",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Uma energia monocromática restaura seu espírito mágico.",
+          "hpDelta": 4,
+          "mpDelta": 10,
+          "meatDelta": 0,
+          "giveItems": [],
+          "statGain": { "mysticality": 3 },
+          "triggerEndgame": null
+        }
+      },
+      {
+        "label": "Arrancar o Medalhão da Diplomacia da pedra (-4 HP)",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Você força a pedra, rala os dedos (-4 HP), mas obtém o Medalhão da Diplomacia e um retalho de couro!",
+          "hpDelta": -4,
+          "mpDelta": 0,
+          "meatDelta": 0,
+          "giveItems": ["peace_medallion", "leather_scrap"],
+          "statGain": { "muscle": 2 },
+          "triggerEndgame": null
+        }
+      }
+    ],
+    "image": null
+  },
+  {
+    "id": "wandering_merchant",
+    "title": "Mercador Palito Ambulante",
+    "text": "Um viajante com mochila enorme abre um catálogo rabiscado em folha sulfite.",
+    "choices": [
+      {
+        "label": "Comprar Kit de Proteção (20 Meat)",
+        "costMeat": 20,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "Você recebe um Colete de Papelão Grosso e um Retalho de Couro para crafting.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 0,
+          "giveItems": ["cardboard_vest", "leather_scrap"],
+          "statGain": { "moxie": 1 },
+          "triggerEndgame": null
+        }
+      },
+      {
+        "label": "Trocar histórias sobre o Barão do Espaguete",
+        "costMeat": 0,
+        "requiresItem": null,
+        "outcomes": {
+          "text": "O mercador dá boas dicas táticas e algumas moedas pelo papo.",
+          "hpDelta": 0,
+          "mpDelta": 0,
+          "meatDelta": 12,
+          "giveItems": [],
+          "statGain": { "muscle": 1, "mysticality": 1, "moxie": 1 },
+          "triggerEndgame": null
+        }
+      }
+    ],
+    "image": null
+  }
+]

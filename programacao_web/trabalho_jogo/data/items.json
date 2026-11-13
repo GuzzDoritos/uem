@@ -1,0 +1,189 @@
+[
+  {
+    "id": "meat_paste_snack",
+    "name": "Bolinho de Carne",
+    "type": "consumable",
+    "slot": null,
+    "description": "Um bolinho suspeitamente geométrico feito de carne prensada. Recupera 10 de HP.",
+    "priceMeat": 15,
+    "effects": { "hp": 10, "mp": 0 },
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "espresso_shot",
+    "name": "Café Expresso Duplo",
+    "type": "consumable",
+    "slot": null,
+    "description": "Forte o suficiente para acordar esqueletos. Recupera 4 de HP e 10 de MP.",
+    "priceMeat": 20,
+    "effects": { "hp": 4, "mp": 10 },
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "spaghetti_plate",
+    "name": "Prato de Espaguete Real",
+    "type": "consumable",
+    "slot": null,
+    "description": "Massa al dente digna da nobreza palito. Recupera 22 de HP e 12 de MP.",
+    "priceMeat": 45,
+    "effects": { "hp": 22, "mp": 12 },
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "ancient_tonic",
+    "name": "Tônico dos Antigos",
+    "type": "consumable",
+    "slot": null,
+    "description": "Líquido transparente com gosto de giz e hortelã. Recupera 15 de HP e 15 de MP.",
+    "priceMeat": 40,
+    "effects": { "hp": 15, "mp": 15 },
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "stick_wood",
+    "name": "Galho Reto de Madeira",
+    "type": "material",
+    "slot": null,
+    "description": "Um pedaço de madeira perfeitamente desenhado com duas linhas pretas. Útil para crafting.",
+    "priceMeat": 8,
+    "effects": null,
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "sharp_rock",
+    "name": "Pedra Afiada",
+    "type": "material",
+    "slot": null,
+    "description": "Uma pedra pontuda encontrada no chão. Excelente para improvisar ferramentas.",
+    "priceMeat": 10,
+    "effects": null,
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "leather_scrap",
+    "name": "Retalho de Couro",
+    "type": "material",
+    "slot": null,
+    "description": "Um pedaço resistente de couro curtido. Pode reforçar armaduras.",
+    "priceMeat": 12,
+    "effects": null,
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "raw_noodles",
+    "name": "Massa Crua Seca",
+    "type": "material",
+    "slot": null,
+    "description": "Fios de macarrão duro. Falta um bom molho para virar uma refeição.",
+    "priceMeat": 10,
+    "effects": null,
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "spicy_sauce",
+    "name": "Molho Picante Ancestral",
+    "type": "material",
+    "slot": null,
+    "description": "Um pote de molho vermelho imaginário que arde só de olhar.",
+    "priceMeat": 15,
+    "effects": null,
+    "bonuses": null,
+    "image": null
+  },
+  {
+    "id": "colander_hat",
+    "name": "Escorredor de Macarrão",
+    "type": "equipment",
+    "slot": "hat",
+    "description": "Protege a cabeça de ataques e filtra pensamentos místicos.",
+    "priceMeat": 35,
+    "effects": null,
+    "bonuses": { "defense": 2, "mysticality": 2, "maxMp": 4 },
+    "image": null
+  },
+  {
+    "id": "wooden_club",
+    "name": "Porrete de Galho",
+    "type": "equipment",
+    "slot": "weapon",
+    "description": "Simples, rústico e eficiente para resolver discordâncias.",
+    "priceMeat": 25,
+    "effects": null,
+    "bonuses": { "attack": 3, "muscle": 1 },
+    "image": null
+  },
+  {
+    "id": "stone_axe",
+    "name": "Machado de Pedra Artesanal",
+    "type": "equipment",
+    "slot": "weapon",
+    "description": "Arma criada à mão unindo madeira firme e pedra afiada.",
+    "priceMeat": 65,
+    "effects": null,
+    "bonuses": { "attack": 6, "muscle": 3 },
+    "image": null
+  },
+  {
+    "id": "cardboard_vest",
+    "name": "Colete de Papelão Grosso",
+    "type": "equipment",
+    "slot": "armor",
+    "description": "Surpreendentemente resistente contra golpes leves (desde que não chova).",
+    "priceMeat": 30,
+    "effects": null,
+    "bonuses": { "defense": 3, "maxHp": 5 },
+    "image": null
+  },
+  {
+    "id": "reinforced_tunic",
+    "name": "Túnica de Couro Reforçada",
+    "type": "equipment",
+    "slot": "armor",
+    "description": "Proteção completa costurada com retalhos de couro sobre base firme.",
+    "priceMeat": 80,
+    "effects": null,
+    "bonuses": { "defense": 6, "maxHp": 10, "moxie": 2 },
+    "image": null
+  },
+  {
+    "id": "cargo_pants",
+    "name": "Calça de Aventureiro",
+    "type": "equipment",
+    "slot": "pants",
+    "description": "Muitos bolsos vazios que garantem mobilidade e estilo duvidoso.",
+    "priceMeat": 32,
+    "effects": null,
+    "bonuses": { "defense": 2, "moxie": 2 },
+    "image": null
+  },
+  {
+    "id": "lucky_bottle_cap",
+    "name": "Tampinha da Sorte",
+    "type": "equipment",
+    "slot": "accessory",
+    "description": "Uma tampinha metálica amassada que parece desviar golpes fatais.",
+    "priceMeat": 45,
+    "effects": null,
+    "bonuses": { "moxie": 2, "attack": 2, "maxHp": 4 },
+    "image": null
+  },
+  {
+    "id": "peace_medallion",
+    "name": "Medalhão da Diplomacia",
+    "type": "equipment",
+    "slot": "accessory",
+    "description": "Símbolo antigo que permite propor uma trégua imediata ao Barão do Espaguete.",
+    "priceMeat": 60,
+    "effects": null,
+    "bonuses": { "mysticality": 2, "moxie": 2, "defense": 2 },
+    "image": null
+  }
+]

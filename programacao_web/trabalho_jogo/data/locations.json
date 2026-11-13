@@ -1,0 +1,65 @@
+[
+  {
+    "id": "stick_woods",
+    "name": "Bosque das Árvores Palito",
+    "shortLabel": "Bosque Palito",
+    "description": "Área inicial cercada de árvores simples desenhadas à mão. Ideal para juntar materiais e subir de nível.",
+    "recommendedLevel": 1,
+    "unlockedByDefault": true,
+    "unlockFlag": null,
+    "mapPosition": { "x": 18, "y": 24 },
+    "encounters": [
+      { "kind": "monster", "id": "wild_pinecone", "weight": 4 },
+      { "kind": "monster", "id": "skeleton_intern", "weight": 3 },
+      { "kind": "event", "id": "hollow_tree", "weight": 3 }
+    ],
+    "image": null
+  },
+  {
+    "id": "typical_tavern",
+    "name": "A Taverna Típica",
+    "shortLabel": "Taverna Típica",
+    "description": "Movimentada por goblins baristas e brigões. Boa fonte de Meat, café e ingredientes culinários.",
+    "recommendedLevel": 2,
+    "unlockedByDefault": true,
+    "unlockFlag": null,
+    "mapPosition": { "x": 62, "y": 32 },
+    "encounters": [
+      { "kind": "monster", "id": "goblin_barista", "weight": 4 },
+      { "kind": "monster", "id": "barroom_brawler", "weight": 3 },
+      { "kind": "event", "id": "tavern_quiz", "weight": 3 }
+    ],
+    "image": null
+  },
+  {
+    "id": "ancient_ruins",
+    "name": "Ruínas do Templo Antigo",
+    "shortLabel": "Templo Antigo",
+    "description": "Corredores de giz onde moram gárgulas e segredos para enfrentar ou negociar com o Boss.",
+    "recommendedLevel": 3,
+    "unlockedByDefault": true,
+    "unlockFlag": null,
+    "mapPosition": { "x": 28, "y": 68 },
+    "encounters": [
+      { "kind": "monster", "id": "temple_gargoyle", "weight": 4 },
+      { "kind": "monster", "id": "skeleton_intern", "weight": 2 },
+      { "kind": "event", "id": "ancient_altar", "weight": 2 },
+      { "kind": "event", "id": "wandering_merchant", "weight": 2 }
+    ],
+    "image": null
+  },
+  {
+    "id": "baron_peak",
+    "name": "Pico do Barão do Espaguete [BOSS]",
+    "shortLabel": "Pico do Boss",
+    "description": "O covil final da campanha. Derrote o Barão do Espaguete Supremo ou negocie uma trégua mútua!",
+    "recommendedLevel": 3,
+    "unlockedByDefault": true,
+    "unlockFlag": null,
+    "mapPosition": { "x": 70, "y": 72 },
+    "encounters": [
+      { "kind": "monster", "id": "spaghetti_baron", "weight": 1 }
+    ],
+    "image": null
+  }
+]
