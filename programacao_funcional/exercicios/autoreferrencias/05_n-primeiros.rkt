@@ -1,7 +1,7 @@
 #lang racket
 (define (n-primeiros l n)
   (cond
-    [(= n 0) empty]
+    [(zero? n) empty]
     [(empty? l) empty]
     [else (cons (first l) (n-primeiros (rest l) (sub1 n)))]))
 
