@@ -1,15 +1,7 @@
-/**
- * js/combat.js
- * Motor de combate em turnos inspirado em Kingdom of Loathing.
- * Suporta ataque físico, habilidade de classe (MP), uso de consumível,
- * fuga, trégua diplomática contra o Boss e checagem de Vitória / Empate / Derrota.
- */
-
+// Motor de combate em turnos (não persiste nem toca no DOM).
 window.Game = window.Game || {};
 
 (function (Game) {
-  'use strict';
-
   const SKILL_MP_COST = 4;
 
   function randomInt(min, max) {
@@ -18,302 +10,228 @@ window.Game = window.Game || {};
 
   function hasPeaceMedallion() {
     const state = Game.State.get();
-    if (!state) return false;
-    return (
-      state.equipment.accessory === 'peace_medallion' ||
-      Game.Inventory.getItemCount('peace_medallion') > 0
+    return Boolean(
+      state &&
+        (state.equipment.accessory === 'peace_medallion' || Game.Inventory.count('peace_medallion') > 0)
     );
   }
 
-  function runMonsterTurn() {
+  function monsterTurn() {
     const state = Game.State.get();
     const combat = state.activeCombat;
     const monster = Game.Data.monstersById[combat.monsterId];
     const stats = Game.State.getComputedStats();
 
-    // Esquiva parcial baseada em Moxie vs Ataque do monstro
     const dodgeChance = Math.min(0.35, Math.max(0.05, (stats.moxie - monster.attack) * 0.03 + 0.08));
     if (Math.random() < dodgeChance) {
-      combat.log.push(monster.attackText + ' Mas você se esquiva agilmente (0 de dano)!');
+      combat.log.push(`${monster.attackText} Você se esquivou!`);
     } else {
-      const mitigation = Math.floor(stats.defense * 0.55);
-      const raw = monster.attack + randomInt(-1, 2);
-      const damage = Math.max(1, raw - mitigation);
+      const damage = Math.max(1, monster.attack + randomInt(-1, 2) - Math.floor(stats.defense * 0.55));
       state.hp = Math.max(0, state.hp - damage);
-      combat.log.push(monster.attackText + ' Você sofre ' + damage + ' de dano!');
+      combat.log.push(`${monster.attackText} Você perdeu ${damage} HP.`);
     }
 
     if (state.hp <= 0) {
       combat.resolved = true;
       combat.outcome = 'defeat';
-      combat.log.push('Você caiu inconsciente a 0 HP!');
       Game.State.triggerEndgame(
         'defeat',
         'Derrota em Combate!',
-        'Você chegou a 0 HP enfrentando ' + monster.name + '.'
+        `Você chegou a 0 HP enfrentando ${monster.name}.`
       );
       return;
     }
 
     combat.round += 1;
-    Game.State.save();
   }
 
-  function resolveMonsterDefeated() {
+  function resolveVictory() {
     const state = Game.State.get();
     const combat = state.activeCombat;
     const monster = Game.Data.monstersById[combat.monsterId];
 
     combat.log.push(monster.defeatText);
 
-    // Contra-ataque / explosão final especial (ex.: Boss Final para suportar empate)
-    if (monster.specialOnZeroHp && monster.specialOnZeroHp.recoilDamage > 0) {
-      const recoil = monster.specialOnZeroHp.recoilDamage;
-      state.hp = Math.max(0, state.hp - recoil);
+    // Dano de explosão/contra-ataque ao morrer permite empate por nocaute mútuo no Boss
+    if (monster.specialOnZeroHp?.recoilDamage > 0) {
+      state.hp = Math.max(0, state.hp - monster.specialOnZeroHp.recoilDamage);
       combat.log.push(monster.specialOnZeroHp.text);
     }
 
     state.monstersDefeated += 1;
+    const meatWon = randomInt(monster.meatDrop[0], monster.meatDrop[1]);
+    state.meat += meatWon;
+    const levelMsgs = Game.State.addSubstats(monster.statGain);
 
-    // Caso especial: Boss Final
     if (monster.isBoss) {
-      const meatWon = randomInt(monster.meatDrop[0], monster.meatDrop[1]);
-      state.meat += meatWon;
-      Game.State.addSubstats(monster.statGain);
-
+      combat.resolved = true;
       if (state.hp <= 0) {
-        combat.resolved = true;
         combat.outcome = 'draw';
         Game.State.triggerEndgame(
           'draw',
-          'Empate Épico (Nocaute Mútuo)!',
-          'Você derrotou o ' +
-            monster.name +
-            ', mas o ataque final dele reduziu seu HP a 0 no mesmo instante!'
+          'Nocaute Mútuo!',
+          `Você derrotou o ${monster.name}, mas o golpe final dele reduziu seu HP a 0 no mesmo turno.`
         );
       } else {
-        combat.resolved = true;
         combat.outcome = 'victory';
         Game.State.triggerEndgame(
           'victory',
           'Vitória no Reino de Loathing!',
-          'Você derrotou o ' +
-            monster.name +
-            ' mantendo ' +
-            state.hp +
-            ' HP e salvou o reino!'
+          `Você derrotou o ${monster.name} com ${state.hp} HP restantes e salvou o reino.`
         );
       }
       return;
     }
 
-    // Monstro comum derrotado
-    const meatWon = randomInt(monster.meatDrop[0], monster.meatDrop[1]);
-    state.meat += meatWon;
-    combat.log.push('Você ganhou ' + meatWon + ' Meat.');
+    combat.log.push('Você venceu a luta!');
+    combat.log.push(`Você ganhou ${meatWon} Meat.`);
 
-    const levelMessages = Game.State.addSubstats(monster.statGain);
-    levelMessages.forEach(function (msg) {
+    for (const drop of monster.drops || []) {
+      if (Math.random() <= drop.chance && Game.Inventory.add(drop.itemId, 1)) {
+        const item = Game.Data.itemsById[drop.itemId];
+        if (item) combat.log.push(`Você recebeu um item: ${item.name}`);
+      }
+    }
+    for (const msg of levelMsgs) {
       combat.log.push(msg);
-    });
-
-    if (Array.isArray(monster.drops)) {
-      monster.drops.forEach(function (drop) {
-        if (Math.random() <= drop.chance) {
-          Game.Inventory.addItem(drop.itemId, 1);
-          const item = Game.Data.itemsById[drop.itemId];
-          if (item) {
-            combat.log.push('Item obtido: ' + item.name + '!');
-          }
-        }
-      });
     }
 
     combat.resolved = true;
     combat.outcome = 'win';
-    Game.State.save();
   }
 
   Game.Combat = {
-    SKILL_MP_COST: SKILL_MP_COST,
+    SKILL_MP_COST,
 
-    startCombat(monsterId, locationId) {
+    start(monsterId, locationId) {
       const state = Game.State.get();
       const monster = Game.Data.monstersById[monsterId];
       if (!state || !monster) return;
 
       state.activeCombat = {
         monsterId: monster.id,
-        locationId: locationId,
+        locationId,
         monsterHp: monster.hp,
         monsterMaxHp: monster.hp,
         round: 1,
         resolved: false,
         outcome: null,
-        showItemPicker: false,
         log: [monster.introText]
       };
       state.currentView = 'combat';
-      Game.State.save();
     },
 
-    playerAttack() {
+    attack() {
       const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return;
+      const combat = state?.activeCombat;
+      if (!combat || combat.resolved) return;
 
-      const combat = state.activeCombat;
       const monster = Game.Data.monstersById[combat.monsterId];
       const stats = Game.State.getComputedStats();
-
-      combat.showItemPicker = false;
       const damage = Math.max(2, stats.attack - monster.defense + randomInt(0, 3));
+
       combat.monsterHp = Math.max(0, combat.monsterHp - damage);
-      combat.log.push('Turno ' + combat.round + ': Você ataca ' + monster.name + ' causando ' + damage + ' de dano!');
+      combat.log.push(`Você ataca ${monster.name} causando ${damage} de dano.`);
 
-      if (combat.monsterHp <= 0) {
-        resolveMonsterDefeated();
-        return;
-      }
-
-      runMonsterTurn();
+      if (combat.monsterHp <= 0) resolveVictory();
+      else monsterTurn();
     },
 
-    playerSkill() {
+    skill() {
       const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return;
+      const combat = state?.activeCombat;
+      if (!combat || combat.resolved) return;
 
-      const combat = state.activeCombat;
       const monster = Game.Data.monstersById[combat.monsterId];
       const stats = Game.State.getComputedStats();
       const cls = Game.State.CLASSES[state.classId] || Game.State.CLASSES.seal_clubber;
 
-      combat.showItemPicker = false;
-
       if (state.mp < SKILL_MP_COST) {
-        combat.log.push('MP insuficiente para usar ' + cls.skillName + ' (precisa de ' + SKILL_MP_COST + ' MP).');
-        Game.State.save();
+        combat.log.push(`MP insuficiente para ${cls.skillName} (precisa de ${SKILL_MP_COST} MP).`);
         return;
       }
 
       state.mp -= SKILL_MP_COST;
-      const primaryBonus = stats[cls.primaryStat] || 0;
-      const rawSkillDamage = Math.floor(stats.mysticality * 1.1 + primaryBonus * 0.7) + randomInt(2, 5);
-      const damage = Math.max(5, rawSkillDamage - Math.floor(monster.defense * 0.5));
+      const raw = Math.floor(stats.mysticality * 1.1 + (stats[cls.primaryStat] || 0) * 0.7) + randomInt(2, 5);
+      const damage = Math.max(5, raw - Math.floor(monster.defense * 0.5));
 
       combat.monsterHp = Math.max(0, combat.monsterHp - damage);
-      combat.log.push(
-        'Turno ' +
-          combat.round +
-          ': Você usa ' +
-          cls.skillName +
-          ' (-' +
-          SKILL_MP_COST +
-          ' MP) e causa ' +
-          damage +
-          ' de dano!'
-      );
+      combat.log.push(`Você usa ${cls.skillName} (-${SKILL_MP_COST} MP) causando ${damage} de dano.`);
 
-      if (combat.monsterHp <= 0) {
-        resolveMonsterDefeated();
-        return;
-      }
-
-      runMonsterTurn();
+      if (combat.monsterHp <= 0) resolveVictory();
+      else monsterTurn();
     },
 
-    toggleItemPicker() {
+    useItem(itemId) {
       const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return;
-      state.activeCombat.showItemPicker = !state.activeCombat.showItemPicker;
-      Game.State.save();
+      const combat = state?.activeCombat;
+      if (!combat || combat.resolved) return;
+
+      const res = Game.Inventory.use(itemId);
+      combat.log.push(res.message);
+      if (res.ok) monsterTurn();
     },
 
-    playerUseItem(itemId) {
+    flee() {
       const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return;
+      const combat = state?.activeCombat;
+      if (!combat || combat.resolved) return null;
 
-      const combat = state.activeCombat;
-      const result = Game.Inventory.useConsumable(itemId);
-      combat.showItemPicker = false;
-
-      if (!result.ok) {
-        combat.log.push(result.message);
-        Game.State.save();
-        return;
-      }
-
-      combat.log.push('Turno ' + combat.round + ': ' + result.message);
-      runMonsterTurn();
-    },
-
-    playerFlee() {
-      const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return;
-
-      const combat = state.activeCombat;
       const monster = Game.Data.monstersById[combat.monsterId];
       const stats = Game.State.getComputedStats();
+      const base = monster.isBoss ? 0.55 : 0.7;
+      const chance = Math.min(0.95, Math.max(0.4, base + (stats.moxie - monster.attack) * 0.04));
 
-      combat.showItemPicker = false;
-      const baseChance = monster.isBoss ? 0.55 : 0.7;
-      const fleeChance = Math.min(0.95, Math.max(0.4, baseChance + (stats.moxie - monster.attack) * 0.04));
-
-      if (Math.random() <= fleeChance) {
+      if (Math.random() <= chance) {
         state.activeCombat = null;
         state.currentView = 'map';
-        Game.State.save();
-        return { fled: true, message: 'Você fugiu em segurança de ' + monster.name + '.' };
+        return { fled: true, message: `Você fugiu de ${monster.name}.` };
       }
 
       combat.log.push('Você tentou fugir, mas tropeçou na própria capa!');
-      runMonsterTurn();
+      monsterTurn();
       return { fled: false };
     },
 
-    canProposeTruce() {
+    canTruce() {
       const state = Game.State.get();
-      if (!state || !state.activeCombat || state.activeCombat.resolved) return null;
-      const combat = state.activeCombat;
+      const combat = state?.activeCombat;
+      if (!combat || combat.resolved) return null;
       const monster = Game.Data.monstersById[combat.monsterId];
-      if (!monster || !monster.isBoss) return null;
+      if (!monster?.isBoss) return null;
 
       const medallion = hasPeaceMedallion();
       const weakened = combat.monsterHp <= Math.ceil(combat.monsterMaxHp * 0.5);
       const canPayFeast = state.meat >= 50;
-
       return {
-        medallion: medallion,
-        weakened: weakened,
-        canPayFeast: canPayFeast,
+        medallion,
+        weakened,
+        canPayFeast,
         available: medallion || weakened || canPayFeast
       };
     },
 
-    playerProposeTruce() {
+    truce() {
       const state = Game.State.get();
-      const check = this.canProposeTruce();
+      const check = this.canTruce();
       if (!check) return;
 
       const combat = state.activeCombat;
       if (!check.available) {
         combat.log.push(
-          'O Barão recusa a trégua agora! Enfraqueça-o até 50% de HP, traga o Medalhão da Diplomacia ou tenha 50 Meat para oferecer um banquete.'
+          'O Barão recusa a trégua! Enfraqueça-o até 50% de HP, traga o Medalhão da Diplomacia ou tenha 50 Meat.'
         );
-        Game.State.save();
         return;
       }
 
-      let reason = '';
+      let reason;
       if (check.medallion) {
-        reason =
-          'Você ergue o Medalhão da Diplomacia! O Barão do Espaguete reconhece o símbolo antigo e aceita dividir o Reino em paz (Empate Diplomático).';
+        reason = 'Você ergueu o Medalhão da Diplomacia e selou um acordo de paz com o Barão do Espaguete.';
       } else if (check.weakened) {
-        reason =
-          'Exausto e respeitando sua força, o Barão do Espaguete abaixa o garfo gigante e propõe um tratado de paz mútuo (Empate Diplomático).';
+        reason = 'Enfraquecido pela luta, o Barão abaixou o garfo gigante e aceitou uma trégua mútua.';
       } else {
         state.meat -= 50;
-        reason =
-          'Você oferece 50 Meat para um banquete conjunto de espaguete! Vocês assinam uma trégua cordial (Empate Diplomático).';
+        reason = 'Você ofereceu 50 Meat para um banquete conjunto de espaguete e assinaram a trégua.';
       }
 
       combat.resolved = true;
@@ -321,23 +239,11 @@ window.Game = window.Game || {};
       Game.State.triggerEndgame('draw', 'Empate por Trégua Mútua!', reason);
     },
 
-    finishResolvedCombat() {
+    finish() {
       const state = Game.State.get();
       if (!state) return;
-
       state.activeCombat = null;
-
-      if (state.adventures <= 0 && !state.endgame) {
-        Game.State.triggerEndgame(
-          'defeat',
-          'Fim das Aventuras (Derrota)!',
-          'Suas Adventures chegaram a 0 antes de concluir a missão contra o Barão do Espaguete.'
-        );
-        return;
-      }
-
       state.currentView = 'map';
-      Game.State.save();
     }
   };
 })(window.Game);

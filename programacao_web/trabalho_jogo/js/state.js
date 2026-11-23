@@ -1,15 +1,8 @@
-/**
- * js/state.js
- * Gerencia o estado global da partida, classes iniciais, cálculo de atributos
- * efetivos (stats + equipamentos), progressão de nível, pontuação e localStorage.
- */
-
+// Estado global, cálculo de atributos, nível, pontuação e persistência em localStorage.
 window.Game = window.Game || {};
 
 (function (Game) {
-  'use strict';
-
-  const STORAGE_KEY = 'kol_uem_save_v1';
+  const STORAGE_KEY = 'kol_uem_save_v2';
   const INITIAL_ADVENTURES = 30;
   const INITIAL_MEAT = 50;
 
@@ -19,8 +12,7 @@ window.Game = window.Game || {};
       name: 'Domador de Focas',
       primaryStat: 'muscle',
       skillName: 'Pancada Sísmica',
-      skillDesc: 'Ataque físico pesado impulsionado por Muscle (4 MP).',
-      description: 'Especialista em força bruta, HP elevado e ataques corpo-a-corpo.',
+      description: 'Força bruta, HP elevado e golpes pesados.',
       baseStats: { muscle: 8, mysticality: 5, moxie: 6 },
       starterEquipment: { weapon: 'wooden_club' },
       starterInventory: { meat_paste_snack: 2 }
@@ -30,8 +22,7 @@ window.Game = window.Game || {};
       name: 'Pastamancer',
       primaryStat: 'mysticality',
       skillName: 'Lança de Ravióli',
-      skillDesc: 'Rajada arcana de massa escaldante baseada em Mysticality (4 MP).',
-      description: 'Mestre das artes culinárias arcanas, alto MP e habilidades mágicas.',
+      description: 'Artes culinárias arcanas, alto MP e feitiços.',
       baseStats: { muscle: 5, mysticality: 8, moxie: 6 },
       starterEquipment: { hat: 'colander_hat' },
       starterInventory: { espresso_shot: 2, raw_noodles: 1 }
@@ -41,121 +32,79 @@ window.Game = window.Game || {};
       name: 'Bandido do Disco',
       primaryStat: 'moxie',
       skillName: 'Piruetas Cortantes',
-      skillDesc: 'Golpe acrobático ágil escalado com Moxie + Mysticality (4 MP).',
-      description: 'Ágil e estiloso, com ótima defesa/esquiva e facilidade para fugir.',
+      description: 'Esquiva alta, agilidade e facilidade para fugir.',
       baseStats: { muscle: 6, mysticality: 5, moxie: 8 },
       starterEquipment: { pants: 'cargo_pants' },
       starterInventory: { meat_paste_snack: 1, espresso_shot: 1 }
     }
   };
 
-  let currentState = null;
+  let current = null;
 
-  function createEmptyEquipment() {
-    return {
-      hat: null,
-      weapon: null,
-      armor: null,
-      pants: null,
-      accessory: null
-    };
-  }
-
-  function computeStatsFrom(state) {
+  function computeStats(state) {
     if (!state) {
       return {
-        muscle: 0,
-        mysticality: 0,
-        moxie: 0,
-        baseMuscle: 0,
-        baseMysticality: 0,
-        baseMoxie: 0,
-        maxHp: 10,
-        maxMp: 6,
-        attack: 0,
-        defense: 0
+        muscle: 0, mysticality: 0, moxie: 0,
+        baseMuscle: 0, baseMysticality: 0, baseMoxie: 0,
+        maxHp: 10, maxMp: 6, attack: 0, defense: 0
       };
     }
 
-    const bonuses = {
-      muscle: 0,
-      mysticality: 0,
-      moxie: 0,
-      attack: 0,
-      defense: 0,
-      maxHp: 0,
-      maxMp: 0
-    };
+    const b = { muscle: 0, mysticality: 0, moxie: 0, attack: 0, defense: 0, maxHp: 0, maxMp: 0 };
+    for (const slot of Object.keys(state.equipment)) {
+      const item = Game.Data.itemsById[state.equipment[slot]];
+      if (!item || !item.bonuses) continue;
+      for (const k of Object.keys(b)) {
+        b[k] += item.bonuses[k] || 0;
+      }
+    }
 
-    const slots = Object.keys(state.equipment);
-    slots.forEach(function (slot) {
-      const itemId = state.equipment[slot];
-      if (!itemId) return;
-      const item = Game.Data.itemsById[itemId];
-      if (!item || !item.bonuses) return;
-      Object.keys(bonuses).forEach(function (key) {
-        if (typeof item.bonuses[key] === 'number') {
-          bonuses[key] += item.bonuses[key];
-        }
-      });
-    });
-
-    const muscle = state.stats.muscle + bonuses.muscle;
-    const mysticality = state.stats.mysticality + bonuses.mysticality;
-    const moxie = state.stats.moxie + bonuses.moxie;
+    const muscle = state.stats.muscle + b.muscle;
+    const mysticality = state.stats.mysticality + b.mysticality;
+    const moxie = state.stats.moxie + b.moxie;
 
     return {
-      muscle: muscle,
-      mysticality: mysticality,
-      moxie: moxie,
+      muscle,
+      mysticality,
+      moxie,
       baseMuscle: state.stats.muscle,
       baseMysticality: state.stats.mysticality,
       baseMoxie: state.stats.moxie,
-      maxHp: 10 + muscle * 2 + bonuses.maxHp,
-      maxMp: 6 + mysticality * 2 + bonuses.maxMp,
-      attack: muscle + bonuses.attack,
-      defense: moxie + bonuses.defense
+      maxHp: 10 + muscle * 2 + b.maxHp,
+      maxMp: 6 + mysticality * 2 + b.maxMp,
+      attack: muscle + b.attack,
+      defense: moxie + b.defense
     };
   }
 
-  function getSubstatThreshold(baseValue) {
+  function substatThreshold(baseValue) {
     return Math.max(4, baseValue * 2);
   }
 
   Game.State = {
-    CLASSES: CLASSES,
-    INITIAL_ADVENTURES: INITIAL_ADVENTURES,
+    CLASSES,
+    INITIAL_ADVENTURES,
 
-    get() {
-      return currentState;
-    },
+    get: () => current,
+    getComputedStats: () => computeStats(current),
+    getSubstatThreshold: substatThreshold,
 
     createNewGame(playerName, classId) {
       const cls = CLASSES[classId] || CLASSES.seal_clubber;
-      const cleanName = (playerName || '').trim() || 'Aventureiro Palito';
-
       const state = {
         started: true,
-        name: cleanName,
+        name: (playerName || '').trim() || 'Aventureiro',
         classId: cls.id,
         className: cls.name,
         level: 1,
-        stats: {
-          muscle: cls.baseStats.muscle,
-          mysticality: cls.baseStats.mysticality,
-          moxie: cls.baseStats.moxie
-        },
-        substats: {
-          muscle: 0,
-          mysticality: 0,
-          moxie: 0
-        },
+        stats: { ...cls.baseStats },
+        substats: { muscle: 0, mysticality: 0, moxie: 0 },
         hp: 0,
         mp: 0,
         meat: INITIAL_MEAT,
         adventures: INITIAL_ADVENTURES,
-        equipment: Object.assign(createEmptyEquipment(), cls.starterEquipment),
-        inventory: Object.assign({}, cls.starterInventory),
+        equipment: { hat: null, weapon: null, armor: null, pants: null, accessory: null, ...cls.starterEquipment },
+        inventory: { ...cls.starterInventory },
         monstersDefeated: 0,
         eventsResolved: 0,
         questText: 'Derrotar o Barão do Espaguete Supremo no Pico do Boss',
@@ -166,119 +115,105 @@ window.Game = window.Game || {};
         endgame: null
       };
 
-      const computed = computeStatsFrom(state);
-      state.hp = computed.maxHp;
-      state.mp = computed.maxMp;
-
-      currentState = state;
-      this.save();
-      return currentState;
+      const stats = computeStats(state);
+      state.hp = stats.maxHp;
+      state.mp = stats.maxMp;
+      current = state;
+      return current;
     },
-
-    getComputedStats() {
-      return computeStatsFrom(currentState);
-    },
-
-    getSubstatThreshold: getSubstatThreshold,
 
     clampVitals() {
-      if (!currentState) return;
-      const computed = computeStatsFrom(currentState);
-      currentState.hp = Math.max(0, Math.min(currentState.hp, computed.maxHp));
-      currentState.mp = Math.max(0, Math.min(currentState.mp, computed.maxMp));
+      if (!current) return;
+      const stats = computeStats(current);
+      current.hp = Math.max(0, Math.min(current.hp, stats.maxHp));
+      current.mp = Math.max(0, Math.min(current.mp, stats.maxMp));
     },
 
     addSubstats(gain) {
-      if (!currentState || !gain) return [];
-      const messages = [];
-      const keys = ['muscle', 'mysticality', 'moxie'];
+      if (!current || !gain) return [];
+      const msgs = [];
 
-      keys.forEach(function (stat) {
+      for (const stat of ['muscle', 'mysticality', 'moxie']) {
         const amount = gain[stat] || 0;
-        if (amount <= 0) return;
-        currentState.substats[stat] += amount;
+        if (amount <= 0) continue;
+        current.substats[stat] += amount;
 
-        while (currentState.substats[stat] >= getSubstatThreshold(currentState.stats[stat])) {
-          currentState.substats[stat] -= getSubstatThreshold(currentState.stats[stat]);
-          currentState.stats[stat] += 1;
-          messages.push('Seu atributo ' + stat + ' subiu para ' + currentState.stats[stat] + '!');
+        while (current.substats[stat] >= substatThreshold(current.stats[stat])) {
+          current.substats[stat] -= substatThreshold(current.stats[stat]);
+          current.stats[stat] += 1;
+          msgs.push(`Você ganhou um ponto de ${stat} (${current.stats[stat]}).`);
         }
-      });
+      }
 
-      const totalBase =
-        currentState.stats.muscle +
-        currentState.stats.mysticality +
-        currentState.stats.moxie;
+      const totalBase = current.stats.muscle + current.stats.mysticality + current.stats.moxie;
       const newLevel = 1 + Math.floor(Math.max(0, totalBase - 19) / 4);
-
-      if (newLevel > currentState.level) {
-        currentState.level = newLevel;
-        const computed = computeStatsFrom(currentState);
-        currentState.hp = Math.min(computed.maxHp, currentState.hp + 6);
-        currentState.mp = Math.min(computed.maxMp, currentState.mp + 4);
-        messages.push('LEVEL UP! Você alcançou o Nível ' + newLevel + ' (+6 HP, +4 MP)!');
+      if (newLevel > current.level) {
+        current.level = newLevel;
+        const stats = computeStats(current);
+        current.hp = Math.min(stats.maxHp, current.hp + 6);
+        current.mp = Math.min(stats.maxMp, current.mp + 4);
+        msgs.push(`Você subiu para o Level ${newLevel}! (+6 HP, +4 MP)`);
       }
 
       this.clampVitals();
-      return messages;
+      return msgs;
     },
 
     getScoreBreakdown() {
-      if (!currentState) {
+      if (!current) {
         return { meat: 0, adventuresBonus: 0, combatBonus: 0, outcomeBonus: 0, total: 0 };
       }
-
-      const meatScore = currentState.meat;
-      const adventuresBonus = currentState.adventures * 50;
-      const combatBonus = currentState.monstersDefeated * 100;
+      const meat = current.meat;
+      const adventuresBonus = current.adventures * 50;
+      const combatBonus = current.monstersDefeated * 100;
       let outcomeBonus = 0;
-
-      if (currentState.endgame) {
-        if (currentState.endgame.result === 'victory') outcomeBonus = 500;
-        else if (currentState.endgame.result === 'draw') outcomeBonus = 200;
-      }
+      if (current.endgame?.result === 'victory') outcomeBonus = 500;
+      else if (current.endgame?.result === 'draw') outcomeBonus = 200;
 
       return {
-        meat: meatScore,
-        adventuresBonus: adventuresBonus,
-        combatBonus: combatBonus,
-        outcomeBonus: outcomeBonus,
-        total: meatScore + adventuresBonus + combatBonus + outcomeBonus
+        meat,
+        adventuresBonus,
+        combatBonus,
+        outcomeBonus,
+        total: meat + adventuresBonus + combatBonus + outcomeBonus
       };
     },
 
     setView(viewName) {
-      if (!currentState) return;
-      currentState.currentView = viewName;
-      this.save();
+      if (current) current.currentView = viewName;
     },
 
     triggerEndgame(result, title, reason) {
-      if (!currentState) return;
-      currentState.endgame = {
-        result: result, // 'victory' | 'draw' | 'defeat'
-        title: title,
-        reason: reason
-      };
-      currentState.activeCombat = null;
-      currentState.activeEvent = null;
-      currentState.currentView = 'endgame';
+      if (!current) return;
+      current.endgame = { result, title, reason };
+      current.activeCombat = null;
+      current.activeEvent = null;
+      current.currentView = 'endgame';
 
-      if (result === 'victory') {
-        currentState.questText = 'Missão cumprida! O Reino foi salvo.';
-      } else if (result === 'draw') {
-        currentState.questText = 'Campanha encerrada em empate histórico.';
-      } else {
-        currentState.questText = 'Aventura encerrada em derrota.';
-      }
+      if (result === 'victory') current.questText = 'Missão cumprida! O Reino foi salvo.';
+      else if (result === 'draw') current.questText = 'Campanha encerrada em empate histórico.';
+      else current.questText = 'Aventura encerrada em derrota.';
+    },
 
-      this.save();
+    checkOutOfAdventures() {
+      if (!current || current.endgame || current.adventures > 0) return false;
+      const busy =
+        (current.activeCombat && !current.activeCombat.resolved) ||
+        (current.activeEvent && !current.activeEvent.resolved);
+      if (busy) return false;
+
+      this.triggerEndgame(
+        'defeat',
+        'Fim das Aventuras!',
+        'Suas Adventures chegaram a 0 antes de resolver a missão do Barão do Espaguete.'
+      );
+      return true;
     },
 
     save() {
-      if (!currentState) return;
+      if (!current) return;
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(currentState));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
       } catch (err) {
         console.warn('Erro ao salvar no localStorage:', err);
       }
@@ -290,10 +225,9 @@ window.Game = window.Game || {};
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (!parsed || !parsed.started) return null;
-        currentState = parsed;
-        return currentState;
+        current = parsed;
+        return current;
       } catch (err) {
-        console.warn('Erro ao carregar save do localStorage:', err);
         return null;
       }
     },
@@ -301,8 +235,7 @@ window.Game = window.Game || {};
     hasSavedGame() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return false;
-        const parsed = JSON.parse(raw);
+        const parsed = raw ? JSON.parse(raw) : null;
         return Boolean(parsed && parsed.started);
       } catch (err) {
         return false;
@@ -310,7 +243,7 @@ window.Game = window.Game || {};
     },
 
     clearSave() {
-      currentState = null;
+      current = null;
       try {
         localStorage.removeItem(STORAGE_KEY);
       } catch (err) {

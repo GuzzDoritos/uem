@@ -16,11 +16,12 @@
 
 ## 2. Requisitos Obrigatórios da Disciplina (Checklist de Avaliação)
 1. **Interface (HTML e CSS):**
-   - Estética fiel à referência do *Kingdom of Loathing*: fundo branco (`#ffffff`), bordas/linhas pretas simples (`1px` ou `2px solid #000000`), tipografia limpa (`Arial, Verdana, sans-serif`), sem barra lateral direita (chat/anúncios).
-   - Estrutura visual em três regiões principais:
-     - **Barra Lateral Esquerda (Character/Stats Pane):** Avatar palito (placeholder SVG/CSS), Nome, Nível, Classe, Atributos (*Muscle*, *Mysticality*, *Moxie*) com barras de progresso de sub-pontos, Recursos (*HP*, *MP*, *Meat*, *Adventures* restantes), *Current Quest* (missão atual), *Last Adventure* e *Score* (pontuação).
-     - **Barra Superior (Top Menu Pane):** Botões/ícones simples em linha preta para abrir o **Mapa**, **Inventário**, **Crafting**, **Acampamento (Descansar)**, **Ajuda/Controles** e **Reiniciar Partida**.
-     - **Painel Central (Main Pane):** Área dinâmica principal que alterna entre: Tela Inicial, Mapa Principal/Zonas, Cena de Batalha, Cena de Evento Narrativo, Inventário/Equipamentos, Crafting, Acampamento e Tela de Fim de Jogo.
+   - Estética fiel à referência original do *Kingdom of Loathing*: fundo branco (`#ffffff`), linhas pretas simples (`1px` ou `2px solid #000000`) **mais o azul clássico de destaque (`#0000ff`) nas barras de título e bordas das caixas de conteúdo**, tipografia limpa (`Arial, Helvetica, sans-serif`), layout em estilo frames ocupando toda a largura (sem barra lateral direita de chat/anúncios).
+   - Na **Tela Inicial**, as barras lateral e superior ficam ocultas (`body.is-title`), centralizando o conteúdo como página de entrada separada.
+   - Estrutura visual em três regiões principais durante o jogo:
+     - **Barra Lateral Esquerda (`#char-pane`, ~150px):** Avatar palito (SVG), Nome sublinhado, Nível com barra de progresso, Classe, Atributos (*Muscle*, *Mysticality*, *Moxie*) com barras de sub-pontos, Recursos (*HP*, *MP*, *Meat*, *Adventures*), *Current Quest*, *Last Adventure* (link) e *Score*.
+     - **Barra Superior (`#top-pane`):** Ícones simples em traço preto com rótulo em minúsculas abaixo para **mapa**, **inventário**, **crafting**, **acampamento**, **ajuda** e **reiniciar**, além das luas *Ronald & Grimace*.
+     - **Painel Central (`#main-pane`):** Área de aviso (`#notice`) e caixa dinâmica (`#view`) alternando entre Tela Inicial, Mapa, Combate, Evento, Inventário, Crafting, Acampamento, Ajuda e Fim de Jogo.
 2. **Tela Inicial:**
    - Exibe o nome do jogo, explicação breve das regras e controles, campo de nome do personagem e seleção de classe inicial.
    - Botão **Iniciar Nova Partida** e botão **Continuar Jogo** (visível/habilitado quando houver estado salvo no `localStorage`).
@@ -66,23 +67,27 @@
 ```text
 trabalho_jogo/
 ├── AGENTS.md
-├── index.html              # Estrutura principal (layout KoL: topo, sidebar esquerda, centro)
+├── index.html              # Estrutura principal (layout KoL em frames: sidebar esquerda, topo, centro)
 ├── css/
-│   └── style.css           # Estilo P&B minimalista (fundo branco, linhas pretas, tabelas/bordas KoL)
+│   └── style.css           # Estilo KoL (fundo branco, linhas pretas, caixas com cabeçalho/borda #0000ff)
+├── tools/
+│   └── build-data.ps1      # Gera data/bundle.js a partir dos JSONs para suporte a file://
 ├── js/
-│   ├── main.js             # Bootstrap, inicialização de dados, loop de eventos e atalhos de teclado
+│   ├── main.js             # Bootstrap, tabela de ações (data-action), atalhos (data-key) e save único
 │   ├── state.js            # Estado global do jogador, fórmulas de atributos/nível, score e localStorage
-│   ├── dataLoader.js       # Carregamento dos JSONs via fetch() com fallback para execução local (file://)
-│   ├── combat.js           # Motor de combate em turnos (ataque, skill, item, fuga, vitória/empate/derrota)
+│   ├── dataLoader.js       # Carregamento dos JSONs via fetch() com fallback para window.GAME_DATA
+│   ├── combat.js           # Motor de combate em turnos (ataque, skill, item, fuga, trégua, vitória/empate/derrota)
 │   ├── events.js           # Motor de encontros narrativos (não-combate) e escolhas ramificadas
 │   ├── inventory.js        # Gerenciamento de mochila, uso de consumíveis, equipar/desequipar e crafting
-│   └── ui.js               # Renderização pura do DOM para cada tela e atualização da sidebar/topbar
+│   ├── art.js              # Desenhos SVG inline em traço preto (avatar, ícones, monstros, mapa, itens)
+│   └── ui.js               # Renderização pura do DOM via template literals
 └── data/
     ├── items.json          # Itens consumíveis, materiais de crafting e equipamentos/armaduras
     ├── monsters.json       # Inimigos comuns e Boss Final (stats, falas, drops, recompensas)
     ├── events.json         # Encontros não-combate com escolhas e consequências
-    ├── locations.json      # Zonas do mapa, tabela de encontros (monstros/eventos) e pré-requisitos
-    └── recipes.json        # Receitas de crafting (ingrediente A + ingrediente B -> resultado)
+    ├── locations.json      # Zonas do mapa, posições e tabela de encontros
+    ├── recipes.json        # Receitas de crafting (ingrediente A + ingrediente B -> resultado)
+    └── bundle.js           # GERADO por tools/build-data.ps1 (não editar à mão)
 ```
 
 ---
@@ -90,16 +95,16 @@ trabalho_jogo/
 ## 5. Convenções dos Schemas JSON
 
 ### `data/items.json`
-- Campos esperados: `id`, `name`, `type` (`"consumable" | "equipment" | "material"`), `slot` (`"hat" | "weapon" | "armor" | "pants" | "accessory" | null`), `description`, `priceMeat`, `effects` (para consumíveis: `{ "hp": 10, "mp": 5 }`), `bonuses` (para equipamentos: `{ "muscle": 2, "defense": 3 }`).
+- Campos esperados: `id`, `name`, `type` (`"consumable" | "equipment" | "material"`), `slot` (`"hat" | "weapon" | "armor" | "pants" | "accessory" | null`), `description`, `priceMeat`, `effects` (para consumíveis: `{ "hp": 10, "mp": 5 }`), `bonuses` (para equipamentos: `{ "muscle": 2, "defense": 3 }`), `image` (string opcional ou `null`).
 
 ### `data/monsters.json`
-- Campos esperados: `id`, `name`, `isBoss` (boolean), `hp`, `attack`, `defense`, `meatDrop`, `statGain` (`{ "muscle": 2, "mysticality": 1, "moxie": 1 }`), `drops` (`[{ "itemId": "...", "chance": 0.5 }]`), `introText`, `attackText`, `defeatText`, `specialOnZeroHp` (opcional, para suportar empate por explosão/contra-ataque final do Boss).
+- Campos esperados: `id`, `name`, `isBoss` (boolean), `hp`, `attack`, `defense`, `meatDrop`, `statGain` (`{ "muscle": 2, "mysticality": 1, "moxie": 1 }`), `drops` (`[{ "itemId": "...", "chance": 0.5 }]`), `introText`, `attackText`, `defeatText`, `specialOnZeroHp` (opcional, para suportar empate por explosão/contra-ataque final do Boss), `image` (string opcional ou `null`).
 
 ### `data/events.json`
-- Campos esperados: `id`, `title`, `text`, `choices` (`[{ "label": "...", "costMeat": 0, "requiresItem": null, "outcomes": { "text": "...", "hpDelta": 0, "mpDelta": 0, "meatDelta": 10, "giveItem": null, "triggerEndgame": null } }]`).
+- Campos esperados: `id`, `title`, `text`, `choices` (`[{ "label": "...", "costMeat": 0, "requiresItem": null, "outcomes": { "text": "...", "hpDelta": 0, "mpDelta": 0, "meatDelta": 10, "giveItems": [], "statGain": {}, "triggerEndgame": null } }]`), `image` (string opcional ou `null`).
 
 ### `data/locations.json`
-- Campos esperados: `id`, `name`, `description`, `recommendedLevel`, `unlockedByDefault`, `unlockFlag`, `encounters` (`[{ "kind": "monster" | "event", "id": "...", "weight": 1 }]`).
+- Campos esperados: `id`, `name`, `shortLabel`, `description`, `recommendedLevel`, `unlockedByDefault`, `unlockFlag`, `mapPosition` (`{ "x": 18, "y": 24 }` em porcentagem no mapa), `encounters` (`[{ "kind": "monster" | "event", "id": "...", "weight": 1 }]`), `image` (string opcional ou `null`).
 
 ### `data/recipes.json`
 - Campos esperados: `id`, `ingredientA`, `ingredientB`, `resultItemId`, `meatCost`, `description`.
@@ -107,12 +112,20 @@ trabalho_jogo/
 ---
 
 ## 6. Nota Técnica sobre Carregamento de JSON no Navegador
-- Ao abrir `index.html` via servidor local (`Live Server`, `python -m http.server`, etc.), `fetch('./data/*.json')` funciona normalmente.
-- Como muitos professores/avaliadores abrem trabalhos acadêmicos dando **duplo clique no `index.html`** (protocolo `file://`, onde `fetch()` é bloqueado por CORS em navegadores modernos), o `dataLoader.js` deve tentar `fetch()` primeiro e possuir um **fallback embutido** (ou camada de dados padrão) caso `fetch()` falhe em `file://`, garantindo que o jogo funcione nos dois cenários.
+- Os arquivos `data/*.json` são a **fonte única da verdade**.
+- Sobre HTTP (`Live Server`, `python -m http.server`, etc.), o `dataLoader.js` busca os arquivos `./data/*.json` diretamente via `fetch()`.
+- Para abrir `index.html` com duplo clique no navegador (`file://`, onde `fetch()` sofre bloqueio de CORS), o jogo usa `window.GAME_DATA` carregado de `data/bundle.js`. **Sempre que editar qualquer JSON em `data/`, execute:**
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File tools/build-data.ps1
+  ```
 
 ---
 
 ## 7. Regras para Agentes e Desenvolvimento Futuro
-- **Manter simplicidade acadêmica:** Código legível, bem comentado e organizado por responsabilidade, sem over-engineering.
-- **Preservar estética KoL:** Nunca adicionar gradientes coloridos pesados, sombras modernas ou tema escuro que fujam da proposta branco + linhas pretas simples.
+- **Manter simplicidade acadêmica:** Código legível, bem comentado no porquê e organizado por responsabilidade, sem over-engineering.
+- **Preservar estética KoL:** Fundo branco, linhas pretas simples e azul clássico `#0000ff` apenas em cabeçalhos e bordas das caixas de conteúdo; sem sombras, cantos arredondados ou gradientes.
+- **Convenções de código:**
+  - Ações de UI declaradas via `data-action` e despachadas pela tabela `actions` em `js/main.js`.
+  - Atalhos contextuais declarados via `data-key` no elemento correspondente.
+  - Motores (`state.js`, `inventory.js`, `combat.js`, `events.js`) não tocam no DOM e não chamam `save()`; `main.js` persiste o estado uma vez por ação.
 - **Atualizar `AGENTS.md`:** Sempre que novos slots, tipos de evento ou campos de JSON forem adicionados, documentar neste arquivo para manter a referência sincronizada.

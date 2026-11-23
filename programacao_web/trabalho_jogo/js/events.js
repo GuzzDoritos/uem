@@ -1,140 +1,105 @@
-/**
- * js/events.js
- * Motor de encontros narrativos (não-combate) carregados de events.json.
- */
-
+// Motor de encontros narrativos (não persiste nem toca no DOM).
 window.Game = window.Game || {};
 
 (function (Game) {
-  'use strict';
-
   Game.Events = {
-    startEvent(eventId, locationId) {
+    start(eventId, locationId) {
       const state = Game.State.get();
-      const eventDef = Game.Data.eventsById[eventId];
-      if (!state || !eventDef) return;
+      const def = Game.Data.eventsById[eventId];
+      if (!state || !def) return;
 
       state.activeEvent = {
-        eventId: eventDef.id,
-        locationId: locationId,
+        eventId: def.id,
+        locationId,
         resolved: false,
-        resultLines: []
+        resultLines: [],
+        gainedItems: []
       };
       state.currentView = 'event';
-      Game.State.save();
     },
 
-    canSelectChoice(choice) {
+    canChoose(choice) {
       const state = Game.State.get();
       if (!state || !choice) return false;
       if (choice.costMeat && state.meat < choice.costMeat) return false;
-      if (choice.requiresItem && Game.Inventory.getItemCount(choice.requiresItem) < 1) {
-        return false;
-      }
+      if (choice.requiresItem && Game.Inventory.count(choice.requiresItem) < 1) return false;
       return true;
     },
 
-    chooseOption(choiceIndex) {
+    choose(choiceIndex) {
       const state = Game.State.get();
-      if (!state || !state.activeEvent || state.activeEvent.resolved) return;
+      const active = state?.activeEvent;
+      if (!active || active.resolved) return null;
 
-      const eventDef = Game.Data.eventsById[state.activeEvent.eventId];
-      const choice = eventDef && eventDef.choices[choiceIndex];
-      if (!choice) return;
+      const def = Game.Data.eventsById[active.eventId];
+      const choice = def?.choices?.[choiceIndex];
+      if (!choice) return null;
 
-      if (!this.canSelectChoice(choice)) {
-        return { ok: false, message: 'Você não atende aos requisitos para esta escolha.' };
+      if (!this.canChoose(choice)) {
+        return { ok: false, message: 'Requisitos insuficientes para esta escolha.' };
       }
 
-      if (choice.costMeat) {
-        state.meat -= choice.costMeat;
-      }
+      if (choice.costMeat) state.meat -= choice.costMeat;
 
       const out = choice.outcomes || {};
       const lines = [];
+      const gainedItems = [];
+      const stats = Game.State.getComputedStats();
+
       if (out.text) lines.push(out.text);
 
-      const computed = Game.State.getComputedStats();
-
-      if (typeof out.hpDelta === 'number' && out.hpDelta !== 0) {
-        state.hp = Math.max(0, Math.min(computed.maxHp, state.hp + out.hpDelta));
-        lines.push((out.hpDelta > 0 ? '+' : '') + out.hpDelta + ' HP.');
+      if (out.hpDelta) {
+        state.hp = Math.max(0, Math.min(stats.maxHp, state.hp + out.hpDelta));
+        lines.push(out.hpDelta > 0 ? `Você ganhou ${out.hpDelta} HP.` : `Você perdeu ${Math.abs(out.hpDelta)} HP.`);
       }
 
-      if (typeof out.mpDelta === 'number' && out.mpDelta !== 0) {
-        state.mp = Math.max(0, Math.min(computed.maxMp, state.mp + out.mpDelta));
-        lines.push((out.mpDelta > 0 ? '+' : '') + out.mpDelta + ' MP.');
+      if (out.mpDelta) {
+        state.mp = Math.max(0, Math.min(stats.maxMp, state.mp + out.mpDelta));
+        lines.push(out.mpDelta > 0 ? `Você ganhou ${out.mpDelta} MP.` : `Você perdeu ${Math.abs(out.mpDelta)} MP.`);
       }
 
-      if (typeof out.meatDelta === 'number' && out.meatDelta !== 0) {
+      if (out.meatDelta) {
         state.meat = Math.max(0, state.meat + out.meatDelta);
-        lines.push((out.meatDelta > 0 ? '+' : '') + out.meatDelta + ' Meat.');
+        lines.push(out.meatDelta > 0 ? `Você ganhou ${out.meatDelta} Meat.` : `Você perdeu ${Math.abs(out.meatDelta)} Meat.`);
       }
 
-      if (Array.isArray(out.giveItems)) {
-        out.giveItems.forEach(function (itemId) {
-          if (Game.Inventory.addItem(itemId, 1)) {
-            const item = Game.Data.itemsById[itemId];
-            lines.push('Item obtido: ' + (item ? item.name : itemId) + '.');
-          }
-        });
-      } else if (out.giveItem) {
-        if (Game.Inventory.addItem(out.giveItem, 1)) {
-          const item = Game.Data.itemsById[out.giveItem];
-          lines.push('Item obtido: ' + (item ? item.name : out.giveItem) + '.');
+      for (const itemId of out.giveItems || []) {
+        if (Game.Inventory.add(itemId, 1)) {
+          gainedItems.push(itemId);
         }
       }
 
       if (out.statGain) {
-        const levelMsgs = Game.State.addSubstats(out.statGain);
-        levelMsgs.forEach(function (msg) {
-          lines.push(msg);
-        });
+        lines.push(...Game.State.addSubstats(out.statGain));
       }
 
       state.eventsResolved += 1;
-      state.activeEvent.resolved = true;
-      state.activeEvent.resultLines = lines;
+      active.resolved = true;
+      active.resultLines = lines;
+      active.gainedItems = gainedItems;
 
       if (state.hp <= 0) {
         Game.State.triggerEndgame(
           'defeat',
           'Derrota por Acidente!',
-          'Seu HP chegou a 0 durante o evento "' + eventDef.title + '".'
+          `Seu HP chegou a 0 durante "${def.title}".`
         );
-        return { ok: true };
-      }
-
-      if (out.triggerEndgame) {
+      } else if (out.triggerEndgame) {
         Game.State.triggerEndgame(
           out.triggerEndgame,
           out.endgameTitle || 'Fim de Jogo',
           out.text || 'A jornada chegou ao fim.'
         );
-        return { ok: true };
       }
 
-      Game.State.save();
       return { ok: true };
     },
 
-    finishResolvedEvent() {
+    finish() {
       const state = Game.State.get();
       if (!state) return;
-
       state.activeEvent = null;
-
-      if (state.adventures <= 0 && !state.endgame) {
-        Game.State.triggerEndgame(
-          'defeat',
-          'Fim das Aventuras (Derrota)!',
-          'Suas Adventures terminaram antes de derrotar o Barão do Espaguete Supremo.'
-        );
-        return;
-      }
-
       state.currentView = 'map';
-      Game.State.save();
     }
   };
 })(window.Game);
