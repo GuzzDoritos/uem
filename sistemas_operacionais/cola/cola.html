@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cola SO</title>
+<style>
+  @page { size: A4; margin: 5mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --f: 7.35pt; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { width: 200mm; font: var(--f)/1.13 "Arial Narrow", "Roboto Condensed", Arial, sans-serif; color: #000; background: #fff; }
+  main { column-count: 4; column-gap: 2.6mm; column-rule: .25pt solid #777; }
+  h1 { font-size: 1.3em; background: #000; color: #fff; padding: .15em .35em; margin: .25em 0 .15em; text-transform: uppercase; break-after: avoid; }
+  h2 { font-size: 1.07em; background: #d6d6d6; padding: 0 .3em; margin: .2em 0 .08em; break-after: avoid; }
+  p { margin: .06em 0; }
+  ul, ol { padding-left: 1.15em; }
+  li { margin: 0; }
+  b { font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; margin: .12em 0; break-inside: avoid; }
+  td, th { border: .25pt solid #555; padding: 0 .2em; vertical-align: top; text-align: left; line-height: 1.1; }
+  th { background: #ececec; }
+  .sim td, .sim th { text-align: center; padding: 0; }
+  pre { font: .92em/1.08 Consolas, monospace; margin: .1em 0; white-space: pre; break-inside: avoid; }
+  .ex { border: .6pt solid #000; padding: .1em .3em; margin: .18em 0; break-inside: avoid; }
+  .ex > b.t { background: #000; color: #fff; padding: 0 .3em; }
+  .f { font-weight: 700; border: .5pt dashed #000; text-align: center; margin: .12em 0; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>1. Processos</h1>
+<p><b>Processo</b> = programa em execução (instância): espaço de endereçamento (código, dados, pilha) + PC, registradores, variáveis, arquivos abertos. Mesmo programa 2× = 2 processos. Programa é passivo.</p>
+<p><b>Pseudoparalelismo:</b> 1 CPU alterna rápido (dezenas/centenas de ms) entre processos → ilusão de simultaneidade. 1 PC físico, vários lógicos. Ordem/ritmo não reproduzível.</p>
+<p><b>Criação (4):</b> início do sistema (1º plano e 2º plano/daemons); chamada de sistema por outro processo; pedido do usuário; tarefa em lote.</p>
+<p><b>fork</b> cria processo novo, cópia do pai (retorna 0 no filho, PID no pai). <b>execv</b> NÃO cria: substitui a imagem do processo atual (mesmo PID), só retorna se der erro.</p>
+<table><tr><th>Término (4)</th><th></th></tr>
+<tr><td><b>Saída normal</b> (voluntário)</td><td>terminou o trabalho (mais comum)</td></tr>
+<tr><td><b>Saída por erro</b> (voluntário)</td><td>detecta erro e sai (compilar arquivo inexistente)</td></tr>
+<tr><td><b>Erro fatal</b> (involuntário)</td><td>instrução ilegal, acesso indevido (pode tratar: try/catch)</td></tr>
+<tr><td><b>Morto por outro</b> (invol.)</td><td>kill (POSIX), TerminateProcess (Win)</td></tr></table>
+<p><b>Hierarquia:</b> Unix: pai+descendentes = grupo de processos; init bifurca → terminais → login → shell. Windows: sem hierarquia.</p>
+<h2>Estados e transições</h2>
+<pre>      ┌── EXECUÇÃO ──┐
+   (1)│      ▲(3)    │(2)
+      ▼      │       ▼
+  BLOQUEADO ─(4)─▶ PRONTO</pre>
+<p><b>Execução:</b> usando CPU. <b>Pronto:</b> só falta CPU. <b>Bloqueado:</b> espera evento (não adianta dar CPU).<br>
+(1) não pode prosseguir (espera E/S, dado) (2) escalonador tira (3) escalonador escolhe (4) evento ocorreu (E/S concluída).<br>
+<b>NÃO existe</b> bloq.→exec. nem pronto→bloq.</p>
+<p><b>Tabela de processos</b> (1 entrada/processo, PCB) permite retomar como se nunca parasse:</p>
+<table><tr><th>Processo</th><th>Memória</th><th>Arquivos</th></tr>
+<tr><td>registradores, PC, PSW, ptr. pilha, estado, prioridade, PID, pai, grupo</td><td>ptr. segm. código, dados, pilha</td><td>dir. raiz, dir. trabalho, descritores, UID, GID</td></tr></table>
+<p><b>Quando é atualizada:</b> nas interrupções (rotina salva estado do processo corrente; parte em assembly) e mudanças de estado.</p>
+<p><b>CPU-bound:</b> maior parte executando (surtos longos, poucas E/S). <b>I/O-bound:</b> maior parte bloqueado (surtos de CPU <b>curtos</b>, muitas E/S). Pode mudar ao longo da vida.</p>
+
+<h1>2. Threads</h1>
+<p>Linhas de execução dentro de um processo ("processos leves"). Compartilham recursos; <b>sem proteção</b> entre elas (cooperam). Processo = agrupamento de recursos + execução. Inicia com 1 thread e cria outras por biblioteca.</p>
+<table><tr><th>Por PROCESSO (compartilhado)</th><th>Por THREAD (privado)</th></tr>
+<tr><td>espaço de endereçamento, variáveis globais, arquivos abertos, processos filhos, alarmes, sinais, contabilidade</td><td><b>PC</b> (cada uma num ponto do código), <b>registradores</b> (valores de trabalho), <b>pilha</b> (chamadas e locais próprias), <b>estado</b></td></tr></table>
+<p><b>Por que usar:</b> várias atividades simultâneas; criar/destruir mais rápido que processo; desempenho se há E/S (nem todas CPU-bound); múltiplas CPUs. Ex.: editor (reformata enquanto digita); servidor web (despachante + trabalhadoras); ler/processar/gravar dados.</p>
+<p><b>POSIX:</b> pthread_create (cria), pthread_exit (encerra, libera pilha), pthread_join (espera outra terminar), pthread_yield (cede CPU).</p>
+<table><tr><th></th><th>Espaço de USUÁRIO</th><th>NÚCLEO</th></tr>
+<tr><td>Como</td><td>SO não conhece; runtime em cada processo + tabela de threads própria; SO escalona processos</td><td>tabela de threads única no SO; SO escalona threads; criar = syscall</td></tr>
+<tr><td>+</td><td>SO não precisa suportar; escalonador personalizado; troca/criação baratas; escala melhor</td><td>thread bloqueada NÃO bloqueia as outras (pode escolher de outro processo); paralelismo; recicla threads inativas</td></tr>
+<tr><td>−</td><td>chamada bloqueante ou page fault bloqueia o processo TODO (contorno: select, caro); thread precisa ceder CPU (sem preempção); inútil p/ CPU-bound em 1 CPU</td><td>syscalls caras → criar/gerir custa mais</td></tr></table>
+<p><b>Híbrida:</b> núcleo escalona threads de núcleo; sobre cada uma há várias de usuário escalonadas pelo runtime.</p>
+<p><b>Escalonamento de threads:</b> usuário: sem preempção entre elas; quem não solta usa todo o quantum do processo (só prejudica o próprio processo); runtime sabe o que cada uma faz. Núcleo: SO decide; no máximo dá prioridades; pode preferir thread do mesmo processo (troca mais barata).</p>
+<p><b>V/F:</b> 1 CPU executa 2 processos ao mesmo tempo F · precisa vários PCs em hardware F · threads compartilham endereçamento V · compartilham pilha F · multithread exige multiprocessador F · no usuário, SO escolhe a próxima thread F.</p>
+
+<h1>3. Escalonamento</h1>
+<p><b>Escalonador</b> escolhe qual processo <b>pronto</b> usa a CPU. <b>Quantum:</b> tempo concedido. <b>Tick:</b> interrupção de relógio.</p>
+<p><b>Preemptivo:</b> PODE retirar o processo (fim do quantum, chegou mais prioritário). <b>Não preemptivo:</b> roda até bloquear, terminar ou ceder. <i>(slide "Quando escalonar" troca os rótulos)</i></p>
+<p><b>Quando escalonar:</b> criação (pai ou filho); término (sem prontos → processo ocioso); bloqueio; interrupção de E/S (quem acordou); interrupção de relógio.</p>
+<p><b>Troca de contexto (cara):</b> modo núcleo, salva registradores e mapa de memória, escolhe, recarrega MMU e registradores, volta.</p>
+<p><b>Entre I/O-bound e CPU-bound, dar CPU ao I/O-bound</b> (logo faz pedido, mantém disco ocupado).</p>
+<table><tr><th>Ambiente</th><th>Objetivos</th></tr>
+<tr><td><b>TODOS</b></td><td>justiça (semelhantes tratados igual); aplicação da política; equilíbrio (recursos ocupados)</td></tr>
+<tr><td><b>Lote</b> (não preemp. ou quantum longo)</td><td>vazão (jobs/h) ↑; tempo de retorno ↓; uso da CPU ↑</td></tr>
+<tr><td><b>Interativo</b> (precisa preempção)</td><td>tempo de resposta ↓; proporcionalidade (expectativa do usuário)</td></tr>
+<tr><td><b>Tempo real</b></td><td>cumprir prazos; previsibilidade</td></tr></table>
+<p>Maximizar vazão ≠ minimizar retorno (só curtos → longos nunca terminam).</p>
+<h2>Lote</h2>
+<p><b>FCFS</b> (não preemp.): fila; quem desbloqueia vai ao fim. Simples; ruim p/ I/O-bound (efeito comboio).<br>
+<b>SJF</b> (não preemp.): menor job primeiro; precisa saber o tempo; ótimo p/ retorno médio se todos chegam juntos; novo job curto não interrompe. A,B,C,D=8,4,3,2: ordem ABCD média (8+12+15+17)/4=<b>13</b>; DCBA (2+5+9+17)/4=<b>8,25</b>.<br>
+<b>SRTN</b> (preemp.): chegou job com tempo &lt; restante do atual → troca. Longos podem passar fome.<br>
+<b>3 níveis:</b> admissão (quem entra no sistema) · memória (RAM × disco) · CPU (qual pronto roda).</p>
+<h2>Interativos</h2>
+<p><b>Round-robin</b> (preemp.): lista de prontos; cada um 1 quantum; acabou ou desbloqueou → fim da fila. Simples, justo, sem starvation. <b>Quantum pequeno</b> → muita troca de contexto (desperdício); <b>grande</b> → resposta lenta (vira FCFS). Ideal ≈20–50 ms.<br>
+<b>Prioridades:</b> roda a maior; p/ não monopolizar, reduz a cada tick; ou prioridade = 1/f (f = fração usada do último quantum). <b>Classes:</b> round-robin dentro da maior classe; reajustar p/ evitar starvation.<br>
+<b>Filas múltiplas:</b> classes com 1,2,4,8… quanta; começa na mais alta; gastou tudo → desce (menos prioridade, mais tempo). Penaliza CPU-bound.<br>
+<b>≠ classes × filas:</b> classe = importância (mesmo quantum); filas = classe depende do uso de CPU (quantum diferente).<br>
+<b>Próximo mais curto:</b> estima pelo passado (<b>aging</b>): a·T0+(1−a)·T1; a=½: T0/4+T1/4+T2/2…<br>
+<b>Garantido:</b> CPU igual p/ todos; razão = TP/(TS/n) (TP usado pelo proc., TS total, n nº); roda a menor razão.<br>
+<b>Loteria:</b> sorteia bilhete; fração f de bilhetes ≈ f da CPU; mais bilhetes = prioridade.<br>
+<b>Fração justa:</b> cota por USUÁRIO. U(A,B,C,D), V(E) 50%: AEBECEDE…; ⅔×⅓: ABECDEABECDE…</p>
+<h2>Tempo real</h2>
+<p><b>Crítico</b> (atraso inadmissível) × <b>não crítico</b> (tolerável). Eventos periódicos ou aperiódicos.</p>
+<p class="f">Escalonável se Σ Ci/Pi ≤ 1 (C = CPU, P = período)</p>
+<p><b>RMS</b>: prioridade <b>estática</b> = frequência (menor período, maior prio.), preemptivo. Condições: termina no período; independentes; mesmo C sempre; aperiódicos sem prazo; preempção sem custo.<br>
+<b>EDF</b>: prioridade <b>dinâmica</b>: prazo mais próximo roda; preemptivo.<br>
+Caso (C/P): A 15/30, B 15/40, C 5/50 (U=0,975): RMS falha (C perde prazo em t=50); EDF cumpre. (RMS garantido se U ≤ n(2^(1/n)−1): 0,83 (n=2); 0,78 (n=3).)</p>
+<div class="ex"><b class="t">L2-20</b> P=50,100,200,250; C=35,20,10,x. Fixos: 0,70+0,20+0,05=0,95. a) x=25: +0,10 = 1,05&gt;1 → <b>NÃO</b>. b) x/250 ≤ 0,05 → <b>x ≤ 12,5 ms</b>. Ex. slide: 50/100+30/200+100/500=0,85 → sim.</div>
+<div class="ex"><b class="t">Gantt</b> (chegada,CPU): P1(0,8) P2(1,4) P3(2,2). Retorno = fim − chegada; espera = retorno − CPU; resposta = 1ª vez − chegada.
+<table><tr><th>Alg.</th><th>Linha do tempo</th><th>Ret.</th><th>Esp.</th></tr>
+<tr><td>FCFS</td><td>P1 0-8, P2 8-12, P3 12-14</td><td>10,33</td><td>5,67</td></tr>
+<tr><td>SJF</td><td>P1 0-8, P3 8-10, P2 10-14</td><td>9,67</td><td>5</td></tr>
+<tr><td>SRTN</td><td>P1 0-1, P2 1-2, P3 2-4, P2 4-7, P1 7-14</td><td>7,33</td><td>2,67</td></tr>
+<tr><td>RR q=3</td><td>P1 0-3, P2 3-6, P3 6-8, P1 8-11, P2 11-12, P1 12-14</td><td>10,33</td><td>5,67</td></tr></table>
+RR: quem chega entra na fila antes do preemptado. Vazão = nº concluídos / tempo (3/14).</div>
+<p><b>V/F:</b> lote é sempre não preemptivo F · RR pode nunca escalonar alguém F · filas múltiplas penalizam CPU-bound V · loteria não prioriza F · RMS não preempta F · EDF estático F · RMS ↔ frequência V.</p>
+
+<h1>4. Memória virtual</h1>
+<p>Processo pode ocupar <b>mais que a memória física</b>: SO mantém partes ativas na RAM, resto no disco (antes: programador dividia em módulos). Quem espera página = bloqueado por E/S.</p>
+<p><b>Paginação:</b> espaço virtual dividido em <b>páginas</b>; RAM em <b>molduras</b> (page frames) de mesmo tamanho; transferências sempre em páginas. Sem fragmentação externa; há <b>interna</b> (≈ ½ última página).</p>
+<p><b>MMU:</b> hardware que traduz virtual → físico. Bits altos = nº da página (índice na tabela → moldura); bits baixos = deslocamento (copiado). 16 bits, 4 bits pág. + 12 desloc. = 16 páginas de 4 KB.</p>
+<p class="f">p = end ÷ tam · d = end mod tam · físico = moldura·tam + d</p>
+<div class="ex"><b class="t">Tradução</b> end 8196, pág 4096: p=2, d=4; página 2 na moldura 6 → 6·4096+4 = <b>24580</b>. Nº de entradas = 2^(bits end − bits desloc).</div>
+<p><b>Page fault:</b> página ausente → interrupção → SO acha moldura livre ou escolhe vítima (grava se M=1) → lê do disco (processo bloqueado) → atualiza tabela → reexecuta a instrução.</p>
+<p><b>Entrada da tabela:</b> nº da moldura; <b>presente/ausente</b> (0 → fault); <b>proteção</b> (1 bit R/RW ou RWX); <b>referenciada R</b> (qualquer acesso); <b>modificada M</b> (escrita → precisa gravar); <b>cache desabilitado</b> (E/S: ler do dispositivo).</p>
+<p><b>Tabela</b> (1 por processo): problemas = grande (32 bits, 4 KB → 2²⁰ ≈ 1 milhão entradas; ×4 B = 4 MB) e precisa ser rápida.<br>
+• Em <b>registradores</b>: sem acesso à memória; troca de contexto cara.<br>
+• Em <b>memória</b> + registrador base: troca barata; acessos extras.<br>
+• <b>Multinível</b>: N níveis = N+1 campos (32 bits: 10|10|12); campo de M bits → 2^M entradas; só mantém tabelas usadas; &gt;3 níveis não compensa.<br>
+• <b>Invertida</b>: 1 entrada por MOLDURA (processo, página); 1 GB/4 KB = 262.144; precisa buscar (n,p) → hash + TLB. Útil em 64 bits (2⁵² páginas).</p>
+<p><b>Desempenho:</b> 1 nível = 2 acessos (−50%); 2 níveis = 3 (−⅔). Mitiga: <b>TLB</b> (memória associativa na MMU, poucas entradas, busca paralela; aproveita localidade). Entrada: nº pág. virtual, M, proteção, moldura, válido. <b>Hit</b> → usa; viola proteção → protection fault; <b>miss</b> → consulta tabela e substitui entrada. Gerência por hardware (MMU) ou software (interrupção; MMU simples; ok se poucos misses). TLB miss ≠ page fault.</p>
+<div class="ex"><b class="t">TLB</b> mem 100 ns, TLB 20 ns, hit 90%. <b>Slide:</b> 0,9·20 + 0,1·100 = <b>28 ns</b> (só tradução). Acesso completo (1 nível): 0,9·120 + 0,1·220 = 130 ns.</div>
+<div class="ex"><b class="t">L5-14</b> instrução com 3 operandos em memória: até <b>4 faults</b> (busca da instrução, 2 operandos lidos, 1 resultado escrito); se cada um cruzar fronteira de página: 8.</div>
+<h2>Projeto de paginação</h2>
+<p><b>Local:</b> vítima só do processo que faltou (fração fixa); pode dar thrashing com molduras sobrando. <b>Global:</b> qualquer processo; nº de molduras varia; em geral <b>melhor</b>. Divisão: igual ou proporcional ao tamanho (com mínimo). <b>PFF</b> (frequência de faults) decide dar/tirar molduras, não qual página. Conj. trabalho/WSClock não fazem sentido global.<br>
+<b>Thrashing:</b> faults contínuos, quase todo tempo esperando; ocorre se Σ conjuntos de trabalho &gt; memória. <b>Controle de carga:</b> mandar processos p/ disco (escalonamento 2 níveis).<br>
+<b>Tamanho de página</b> pequeno: menos frag. interna (n·p/2), não carrega partes inúteis. Grande: tabela menor, transferência mais eficiente (busca/rotação).</p>
+<p class="f">custo = s·e/p + p/2 → p ótimo = √(2se)</p>
+<p>s=tam. processo, e=entrada. s=1 MB, e=8 B → 4 KB.<br>
+<b>Espaços I e D</b> separados: cada um com sua tabela. <b>Compartilhar:</b> páginas só leitura (código); fork Unix: pai/filho mesmas páginas read-only, escreveu → copia (copy-on-write); cuidar ao encerrar.<br>
+<b>Daemon de paginação:</b> dorme, acorda periodicamente; poucas molduras livres → escolhe vítimas pelo algoritmo, grava as modificadas, mantém estoque livre.<br>
+<b>Interface:</b> programador controla mapa: compartilhar regiões nomeadas, troca de msg rápida.</p>
+
+<h1>5. Substituição de páginas</h1>
+<p>Memória cheia → escolher vítima; M=1 → gravar antes. Objetivo: menos faults. <b>R</b>: lido/escrito (zerado a cada tick). <b>M</b>: escrito.</p>
+<table><tr><th>Algoritmo</th><th>Regra</th></tr>
+<tr><td><b>Ótimo</b></td><td>sai a que demora mais p/ ser usada. Impossível (futuro). Serve de comparação (log de execução)</td></tr>
+<tr><td><b>NRU</b></td><td>classes (R,M): 0=00, 1=01, 2=10, 3=11; sai aleatória da menor classe. Simples, aceitável</td></tr>
+<tr><td><b>FIFO</b></td><td>sai a mais antiga CARREGADA. Pode tirar página muito usada</td></tr>
+<tr><td><b>2ª chance</b></td><td>FIFO olhando R: R=1 → zera, vai ao fim; R=0 → sai. Todas R=1 → vira FIFO</td></tr>
+<tr><td><b>Relógio</b></td><td>2ª chance com lista circular + ponteiro: R=1 → zera e avança; R=0 → substitui e avança</td></tr>
+<tr><td><b>LRU</b> ("MRU" no slide)</td><td>sai a há mais tempo SEM USO. Perto do ótimo; caro (lista atualizada a cada acesso)</td></tr>
+<tr><td><b>Matriz NxN</b> (LRU hw)</td><td>usou i: linha i ← 1, depois coluna i ← 0; sai linha de menor binário</td></tr>
+<tr><td><b>Aging</b> (LRU sw)</td><td>a cada tick desloca contador →, põe R no bit mais alto; sai o menor (00100000 &lt; 01111000)</td></tr>
+<tr><td><b>Conj. trabalho</b></td><td>páginas das últimas k refs / últimos τ de tempo VIRTUAL (localidade). R=1 → atualiza instante; R=0 e idade&gt;τ → sai; nenhuma → mais velha com R=0; todas R=1 → aleatória</td></tr>
+<tr><td><b>WSClock</b></td><td>lista circular (R,M,instante). R=1 → zera, avança. R=0 e idade&gt;τ: M=0 substitui; M=1 agenda escrita e segue. Deu a volta: houve escrita → procura até achar 1ª já gravada; nenhuma → 1ª com M=0, senão grava a atual</td></tr></table>
+<p><b>Paginação por demanda:</b> começa sem páginas. <b>Pré-paginação:</b> carrega o conjunto de trabalho antes. w(k,t) cresce devagar com k.</p>
+<p><b>Anomalia de Belady:</b> no FIFO, mais molduras podem dar MAIS faults: 0 1 2 3 0 1 4 0 1 2 3 4 → 3 mold.: <b>9</b>; 4 mold.: <b>10</b>. Não ocorre em LRU e ótimo (pilha: conjunto com m ⊂ com m+1).</p>
+<div class="ex"><b class="t">L5-7</b> 4 molduras (vazias): 0 1 7 2 3 2 7 1 0 3. Fila: esquerda sai primeiro
+<table class="sim"><tr><th>ref</th><th>FIFO</th><th>falta</th><th>LRU</th><th>falta</th></tr>
+<tr><th>0</th><td>0</td><td>F</td><td>0</td><td>F</td></tr>
+<tr><th>1</th><td>01</td><td>F</td><td>01</td><td>F</td></tr>
+<tr><th>7</th><td>017</td><td>F</td><td>017</td><td>F</td></tr>
+<tr><th>2</th><td>0172</td><td>F</td><td>0172</td><td>F</td></tr>
+<tr><th>3</th><td>1723</td><td>F</td><td>1723</td><td>F</td></tr>
+<tr><th>2</th><td>1723</td><td></td><td>1732</td><td></td></tr>
+<tr><th>7</th><td>1723</td><td></td><td>1327</td><td></td></tr>
+<tr><th>1</th><td>1723</td><td></td><td>3271</td><td></td></tr>
+<tr><th>0</th><td>7230</td><td>F</td><td>2710</td><td>F</td></tr>
+<tr><th>3</th><td>7230</td><td></td><td>7103</td><td>F</td></tr>
+</table>
+<b>FIFO 6, LRU 7</b> (ótimo 6). LRU: usada vai p/ o fim mesmo em acerto; FIFO não mexe.</div>
+<div class="ex"><b class="t">L5-8</b> 0 1 2 3 0 1 2 7 0 1 2 7
+<table class="sim"><tr><th>ref</th><td>0</td><td>1</td><td>2</td><td>3</td><td>0</td><td>1</td><td>2</td><td>7</td><td>0</td><td>1</td><td>2</td><td>7</td></tr>
+<tr><th>FIFO F</th><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td></td><td></td><td>F</td><td>F</td><td>F</td><td>F</td><td></td></tr>
+<tr><th>sai</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>0</td><td>1</td><td>2</td><td>3</td><td></td></tr>
+<tr><th>LRU F</th><td>F</td><td>F</td><td>F</td><td>F</td><td></td><td></td><td></td><td>F</td><td></td><td></td><td></td><td></td></tr>
+<tr><th>sai</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>3</td><td></td><td></td><td></td><td></td></tr></table>
+<b>FIFO 8, LRU 5.</b></div>
+<div class="ex"><b class="t">L5-9</b> pág(carga, últ.ref, R, M): 0(126,280,1,0) 1(230,265,0,1) 2(140,270,0,0) 3(110,285,1,1)<br>
+<b>NRU → 2</b> (classe 0) · <b>FIFO → 3</b> (carga 110) · <b>LRU → 1</b> (ref 265) · <b>2ª chance → 2</b> (ordem 3,0,2,1; 3 e 0 têm R=1: zera, fim; 2 tem R=0).</div>
+
+<h1>6. Sistemas de arquivos</h1>
+<p><b>3 requisitos</b> longo prazo: grande volume; persistir após o processo; acesso concorrente.</p>
+<p><b>Arquivo:</b> abstração p/ armazenar/recuperar dados, escondendo onde e como. Visão do usuário (nomes, proteção) × projetista (estruturas, disco). Nome.extensão; pode ser case sensitive.</p>
+<p><b>Estruturas:</b> sequência de <b>bytes</b> (mais comum, SO não interpreta); <b>registros</b> de tamanho fixo; <b>árvore</b> de registros (acesso por chave).</p>
+<p><b>Tipos</b> (Unix): <b>regulares</b> (dados: ASCII = linhas de texto; binários = estrutura do programa, ex. executável, archive de módulos objeto); <b>diretórios</b>; <b>especiais de caractere</b> (impressora) e <b>de bloco</b> (disco), em /dev.</p>
+<p><b>Acesso:</b> sequencial (sem saltos; fita) × aleatório (seek; disco). <b>Atributos:</b> proteção, senha, criador, dono, oculto, tamanho, criação, último acesso/modificação. <b>Operações:</b> create, delete, open, close, read, write, append, seek, get/set attributes, rename.</p>
+<p><b>Diretórios</b> (organizam; em geral são arquivos): 1 nível (tudo junto); 2 níveis (um por usuário, sem subdividir); <b>hierárquico</b> (árvore; raiz "/" no Unix, "C:" no Windows). <b>Absoluto</b> desde a raiz (/home/ana/a.txt) × <b>relativo</b> ao diretório atual (docs/a.txt). "." atual, ".." pai. Ops: create, delete, opendir, closedir, readdir, rename, link, unlink.</p>
+<p><b>Disco:</b> setor 0 = <b>MBR</b> (+ tabela de partições). BIOS executa MBR → acha partição ativa → lê e roda <b>bloco de boot</b> → carrega SO.</p>
+<p class="f">| Boot | Superbloco | Esp. livre | I-nodes | Raiz | Arqs/dirs |</p>
+<p>Superbloco = parâmetros do FS (vão p/ memória). Toda partição tem bloco de boot.</p>
+<table><tr><th>Alocação</th><th>Como</th><th>+</th><th>−</th></tr>
+<tr><td><b>Contígua</b></td><td>blocos seguidos (início + nº)</td><td>simples; leitura rápida</td><td>fragm. externa; compactação</td></tr>
+<tr><td><b>Lista encadeada</b></td><td>cada bloco aponta o próximo</td><td>sem fragm. externa</td><td>acesso aleatório lento; ponteiro rouba espaço</td></tr>
+<tr><td><b>FAT</b> (tabela na RAM)</td><td>entrada por bloco do disco; −1 = fim. DOS, Win 95/98/ME</td><td>bloco inteiro p/ dados; aleatório sem ir ao disco</td><td>tabela toda na memória (cresce c/ disco)</td></tr>
+<tr><td><b>I-node</b> (Unix)</td><td>por arquivo: atributos + endereços dos blocos</td><td>só ocupa memória se aberto</td><td>limite de endereços → blocos indiretos</td></tr></table>
+<div class="ex"><b class="t">FAT</b> A começa em 4: T[4]=7, T[7]=2, T[2]=10, T[10]=12, T[12]=−1 → 4,7,2,10,12. Tamanho = nº blocos × entrada: 1 TB/1 KB = 2³⁰ × 4 B = 4 GB. Ler 5º bloco: lista = 5 leituras; i-node/FAT = 1.<br>
+<b>I-node</b> máx. = (diretos + P + P² + P³)·bloco, P = bloco/ponteiro (4 KB/4 B=1024; 12 diretos ≈ 4 TB).</div>
+<p><b>Implementação de diretórios:</b> mapeia nome → localização: nº do i-node, 1º bloco (listas) ou endereço inicial (contígua). Entrada = nome + atributos, ou nome + i-node. Nomes variáveis: entrada tem ponteiro p/ o nome guardado na heap.<br>
+Resolver /usr/ana/x: i-node raiz → dir raiz → i-node usr → bloco → i-node ana → bloco → i-node x.</p>
+
+<h1>7. E/S: hardware</h1>
+<p>SO controla (emite comandos, trata interrupções e erros) e dá interface simples.</p>
+<p><b>Bloco:</b> blocos fixos (512–32768 B) endereçáveis, independentes (disco). <b>Caractere:</b> fluxo, não endereçável (impressora, rede, mouse). Fora: relógio, vídeo mapeado. Taxas muito diferentes.</p>
+<p><b>Controlador/adaptador:</b> eletrônica de baixo nível. Disco: fluxo serial = <b>preâmbulo</b> (cilindro, setor; feito na formatação) + <b>dados</b> + <b>ECC</b>; controlador monta bloco e corrige. <b>Registradores:</b> SO escreve comandos, lê estado; às vezes há buffer.</p>
+<table><tr><th></th><th>Portas de E/S</th><th>Mapeada em memória</th></tr>
+<tr><td>Como</td><td>nº de porta, espaço separado; IN R,P / OUT P,R</td><td>endereços reservados p/ registradores</td></tr>
+<tr><td>+</td><td>não usa endereços de memória; sem problema de cache</td><td>sem instruções especiais; não precisa proteção extra; instruções de memória acessam E/S</td></tr>
+<tr><td>−</td><td>instruções especiais; proteção própria</td><td>cache → dado incoerente; vários barramentos (filtrar endereços)</td></tr></table>
+<p><b>DMA:</b> controlador (um, na placa-mãe) acessa memória sem a CPU; registradores de endereço, contador, controle. <b>Sem DMA:</b> disco lê, verifica, interrompe, SO copia byte a byte. <b>Com:</b> 1) CPU programa DMA 2) disco lê e verifica no buffer 3) DMA pede transferência 4) disco grava na memória 5) confirma ao DMA 6) DMA incrementa endereço, decrementa contador 7) repete até 0 → interrompe CPU. <b>Buffer no disco:</b> verificar erro antes; barramento pode estar ocupado.</p>
+<p><b>Interrupção:</b> dispositivo termina → sinal ao controlador de interrupção → CPU. Se ocupado, pedido fica ativo. Simultâneas: maior prioridade. Nº no barramento indexa o vetor de interrupções; rotina confirma; contexto salvo (pilha).</p>
+<p><b>Pipeline:</b> PC mostra o que ENTROU, não o que terminou; fora de ordem: pode ser impossível saber.<br>
+<b>Precisa:</b> (1) PC salvo em local conhecido (2) anteriores totalmente executadas (3) posteriores não executadas (4) estado da apontada conhecido. Hardware complexo (x86). <b>Imprecisa:</b> não cumpre; empilha estado interno, SO interpreta; sobra chip p/ cache.</p>
+
+<h1>8. E/S: software</h1>
+<p><b>Metas:</b> independência de dispositivo; nomeação uniforme (montar pendrive em diretório); erros tratados perto do hardware (transitórios → repetir); transferência <b>síncrona/bloqueante</b> × <b>assíncrona/interrupção</b> (SO mostra como bloqueante); buffers; dispositivos <b>compartilhados</b> (disco) × <b>dedicados</b> (impressora → deadlock).</p>
+<table><tr><th>Forma</th><th>Funcionamento (imprimir texto)</th><th>Custo</th></tr>
+<tr><td><b>Programada</b></td><td>copia p/ núcleo; laço: espera impressora pronta, manda 1 char</td><td>CPU presa (espera ocupada); ok em embarcado</td></tr>
+<tr><td><b>Interrupção</b></td><td>manda 1º char, bloqueia processo, escalona; cada interrupção manda o próximo; fim → desbloqueia</td><td>1 interrupção por char</td></tr>
+<tr><td><b>DMA</b></td><td>copia buffer, programa DMA, bloqueia; DMA alimenta; 1 interrupção no fim</td><td>ruim se DMA lento ou CPU ociosa</td></tr></table>
+<pre>copy_from_user(buf,p,n);
+for(i=0;i&lt;n;i++){
+ while(*status!=READY);
+ *data = p[i]; }</pre>
+<p><b>Camadas</b> (cima→baixo): <b>usuário</b> (bibliotecas printf/scanf, spool) → <b>independente de dispositivo</b> (interface uniforme p/ drivers, nomes /dev, proteção como arquivo, tamanho de bloco lógico, buffers, alocação) → <b>drivers</b> (configura registradores) → <b>tratador de interrupção</b> (acorda driver) → hardware.</p>
+<p><b>Tratador:</b> salva regs → contexto (MMU/TLB) → pilha → confirma ao controlador → copia regs p/ tabela de proc. → executa rotina → escolhe processo → MMU → carrega regs → executa.</p>
+<p><b>Driver:</b> código específico, em geral no núcleo (pode ser usuário); classes bloco/caractere com interface padrão. Verifica parâmetros e uso → escreve comandos → bloqueia até interrupção → verifica erros → retorna status; inicia dispositivo, energia, log.</p>
+<p><b>Buffers:</b> destino indisponível, velocidades diferentes, tempo real, analisar pacotes; custo = cópias.</p>
+<table><tr><th>Leitura (modem)</th><th>Problema</th></tr>
+<tr><td>a) sem buffer</td><td>processo acorda a cada caractere</td></tr>
+<tr><td>b) buffer no usuário</td><td>página pode estar no disco; travar muitas páginas piora tudo</td></tr>
+<tr><td>c) núcleo + usuário</td><td>chegam dados enquanto buffer do núcleo cheio e página vem do disco</td></tr>
+<tr><td>d) <b>2 no núcleo</b> + usuário</td><td>resolve: um enche enquanto outro é copiado</td></tr></table>
+<p><b>Spooling:</b> daemon único com acesso à impressora imprime arquivos de um diretório (também transferência em rede).</p>
+
+<h1>9. Disco e relógio (L8)</h1>
+<p>Pratos, superfícies, <b>trilhas</b>, <b>setores</b>, <b>cilindro</b> (mesmo raio); cabeças num braço.<br>
+<b>RAID</b> (vários discos como um: desempenho + confiabilidade): <b>0</b> faixas, sem redundância; <b>1</b> espelho (½ capacidade); <b>4</b> faixas + disco de paridade (gargalo); <b>5</b> paridade distribuída. 4/5 toleram 1 falha (XOR).<br>
+<b>Torção cilíndrica:</b> setor 0 deslocado entre trilhas p/ não perder uma volta ao trocar de trilha.<br>
+<b>Tempo</b> = busca (seek, maior) + latência rotacional + transferência; melhora: escalonar braço, cache de trilha.<br>
+Braço em 11; pedidos 1,36,16,34,9,12:<br>
+<b>FCFS</b> ordem chegada = 111 cil. · <b>SSF</b> mais próximo: 12,9,16,1,34,36 = 61 (starvation) · <b>Elevador</b> sobe até o fim, inverte: 12,16,34,36,9,1 = 60.<br>
+<b>Setor ruim:</b> substituir por reserva ou deslocar os seguintes (pelo controlador ou SO).<br>
+<b>Relógio:</b> cristal + contador + registrador de carga; contador decrementa, zero → interrupção; disparo único ou onda quadrada (ticks).</p>
+
+<h1>10. Receitas e exercícios extras</h1>
+<h2>Como resolver: escalonamento</h2>
+<ol><li>Anote chegada e CPU de cada processo.</li><li>A cada evento (chegada, fim, quantum, bloqueio) refaça a fila de prontos.</li><li>Desenhe a linha do tempo; anote 1ª execução e fim.</li><li>Retorno = fim − chegada; espera = retorno − CPU (− tempo de E/S, se houver); média = soma/n.</li></ol>
+<p><b>Com E/S:</b> bloqueado não disputa CPU; a E/S corre em paralelo; ao terminar volta ao fim da fila de prontos.</p>
+<div class="ex"><b class="t">RMS × EDF</b> A 15/30, B 15/40, C 5/50 (C/P).<br>
+<b>RMS</b> (A&gt;B&gt;C): A 0-15, B 15-30, A 30-45, B 45-60 → C venceu em 50 sem rodar: <b>falha</b>.<br>
+<b>EDF</b>: A 0-15, B 15-30, <b>C 30-35</b> (prazo 50 &lt; 60), A 35-50, B 50-65, A 65-80, C 80-85, B 85-100, A 100-115, C 115-120, A 120-135, B 135-150: <b>cumpre</b>.<br>
+Com A 10/30 e C 5/50, B 15/40 (U=0,81) ambos cumprem.</div>
+<div class="ex"><b class="t">Estimativa</b> (a=½): est.=10, mediu 6 → 8; mediu 4 → 6; mediu 13 → 9,5.<br>
+<b>Quantum</b> 4 ms, troca 1 ms → 20% perdido.<br>
+<b>Filas múltiplas</b>, job de 100 quanta: 1,2,4,8,16,32,64 (usa 37) → 7 execuções em vez de 100.<br>
+<b>Prioridade 1/f:</b> usou 1/50 do quantum → prioridade 50.</div>
+<h2>Como resolver: endereços</h2>
+<ol><li>bits do deslocamento = log₂(tam. página): 1 KB=10, 4 KB=12, 8 KB=13.</li><li>bits da página = bits do endereço − deslocamento.</li><li>entradas = 2^(bits da página); tabela = entradas × tam. entrada.</li><li>físico: troca nº da página pela moldura, mantém deslocamento; presente=0 → page fault.</li></ol>
+<div class="ex">32 bits, 8 KB: desloc. 13, 2¹⁹ = 524.288 entradas × 4 B = <b>2 MB</b>.<br>
+0x2004 (16 bits, 4 KB): página <b>0x2</b>, desloc. 0x004; moldura 6 → <b>0x6004</b>.<br>
+2¹⁰=1 K · 2²⁰=1 M · 2³⁰=1 G.<br>
+<b>Tempo efetivo</b> (n níveis): h·(tlb+m) + (1−h)·(tlb+(n+1)·m). 2 níveis, 100/20/90%: 0,9·120+0,1·320 = 140 ns (usar o modelo do slide se pedir igual a ele).</div>
+<h2>Como resolver: substituição</h2>
+<ol><li>Acerto: sem falta (LRU atualiza ordem; 2ª chance/relógio só põe R=1).</li><li>Falta com moldura livre: carrega (conta falta).</li><li>Memória cheia: aplica a regra, anota quem sai.</li></ol>
+<div class="ex"><b class="t">Ótimo</b> no L5-7: na falta do 3 sai 0 (usado mais tarde); na falta do 0 sai 1 (ou outro não mais usado) → 6 faltas. No L5-8: 5.</div>
+<div class="ex"><b class="t">2ª chance</b> (início à esq., R/M): P1(1/0) P2(1/1) P3(0/0) P4(0/0) P5(1/1). P1: R=1 → fim com R=0; P2: R=1 → fim com R=0; P3: R=0 → <b>sai</b> (M=0, não grava). Fica: P4 P5 P1 P2 novo(R=1).</div>
+<div class="ex"><b class="t">Matriz</b> 4 págs, acessos 0123210323: linhas finais 0=0100, 1=<b>0000</b>, 2=1100, 3=1110 → sai <b>1</b>.</div>
+<div class="ex"><b class="t">Aging</b> bits R por tick (0→4); contador = tick mais novo à esquerda:
+<table class="sim"><tr><th>pág</th><th>R ticks 0→4</th><th>contador</th></tr><tr><th>0</th><td>11110</td><td>01111000</td></tr><tr><th>1</th><td>01101</td><td>10110000</td></tr><tr><th>2</th><td>10001</td><td>10001000</td></tr><tr><th>3</th><td>00100</td><td>00100000</td></tr><tr><th>4</th><td>11010</td><td>01011000</td></tr><tr><th>5</th><td>10100</td><td>00101000</td></tr></table>sai a página <b>3</b>.</div>
+<div class="ex"><b class="t">Conj. trabalho</b> agora=1000, τ=100: A(R=1) → último uso=1000, fica; B(R=0, último 950): idade 50, fica; C(R=0, último 850): idade 150&gt;100 → <b>sai</b>.</div>
+<h2>E/S e arquivos</h2>
+<pre>// por interrupção
+copy_from_user(buf,p,n);
+enable_interrupts();
+while(*status!=READY);
+*data=p[0]; scheduler();
+// tratador
+if(n==0) unblock_user();
+else{*data=p[i]; n--; i++;}
+ack_interrupt(); return;
+// DMA
+copy_from_user(buf,p,n);
+set_up_DMA(); scheduler();
+// tratador
+ack_interrupt();
+unblock_user(); return;</pre>
+<p><b>Onde fica?</b> checar permissão, nome, buffer → independente de dispos.; calcular trilha/setor, escrever registradores → driver; formatar, spool → usuário; acordar driver → tratador.</p>
+<p><b>Torção:</b> 10.000 rpm (6 ms/volta), 300 setores (20 µs), busca 800 µs → 40 setores. Latência média = ½ volta.</p>
+<div class="ex"><b class="t">Com E/S</b> P1 chega 0: CPU 3, E/S 4, CPU 2. P2 chega 1: CPU 5.<br>
+<b>FCFS:</b> P1 0-3 (E/S 3-7), P2 3-8, P1 8-10. Ret.: P1 10, P2 7. Espera: 1 e 2. Uso CPU 100%.<br>
+<b>RR q=2:</b> P1 0-2, P2 2-4, P1 4-5 (E/S 5-9), P2 5-8, ociosa 8-9, P1 9-11. Ret.: 11 e 7. Espera: 2 e 2. Uso 10/11.<br>
+Espera = retorno − CPU − E/S.</div>
+<h2>Pegadinhas</h2>
+<p>Pronto ≠ bloqueado · programa ≠ processo · fork cria, exec substitui · I/O-bound = surto de CPU curto · TLB miss ≠ page fault · paginação: fragm. interna, não externa · FIFO = mais antiga carregada; LRU = mais tempo sem uso · M=1 exige gravar · SJF/FCFS não preemptivos; SRTN/RR preemptivos · lista encadeada: sequencial ok, aleatório lento · síncrona = bloqueia.</p>
+
+</main>
+</body>
+</html>
